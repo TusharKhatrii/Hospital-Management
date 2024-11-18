@@ -59,9 +59,10 @@ router.post('/', [
             if (results.length > 0) {
                 response.cookie('email', email, { httpOnly: true, secure: false }); // Set email cookie
                 sweetalert.fire('logged In!');
-                response.redirect('/home');  // Redirect to home page after successful login
+                response.redirect('/home/');  // Redirect to home page after successful login
             } else {
-                response.redirect('/login');  // If credentials don't match, stay on login page
+                response.render('login.ejs', { error: 'Invalid credentials. Please try again.' }); // Render with an error message
+                // response.redirect('/login');  // If credentials don't match, stay on login page
             }
             
         });

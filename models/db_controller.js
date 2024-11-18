@@ -50,60 +50,43 @@ module.exports.signup = function (
 };
 
 
-module.exports.getuserid = function (email, callback) {
-  var query = "select *from verify where email = '" + email + "' ";
-  con.query(query, callback);
-};
+// module.exports.getuserid = function (email, callback) {
+//   var query = "select *from verify where email = '" + email + "' ";
+//   con.query(query, callback);
+// };
 
-module.exports.verify = function (username, email, token, callback) {
-  var query =
-    "insert into `verify` (`username`,`email`,`token`) values ('" +
-    username +
-    "','" +
-    email +
-    "','" +
-    token +
-    "')";
-  con.query(query, callback);
-};
 
 module.exports.add_doctor = function (
   first_name,
   last_name,
   email,
-  dob,
-  gender,
+  password,
+  date_of_birth,
   address,
-  phone,
-  image,
-  department,
-  biography,
+  cnic,
+  contact,
+  gender,
+  specialist_id,  // Specialist ID from the Specialties table
+  image,           // BLOB for the doctor's image
   callback
 ) {
-  var query =
-    "INSERT INTO `doctor`(`first_name`,`last_name`,`email`,`dob`,`gender`,`address`,`phone`,`image`,`department`,`biography`) values ('" +
-    first_name +
-    "','" +
-    last_name +
-    "','" +
-    email +
-    "','" +
-    dob +
-    "','" +
-    gender +
-    "','" +
-    address +
-    "','" +
-    phone +
-    "','" +
-    image +
-    "','" +
-    department +
-    "','" +
-    biography +
-    "')";
-  con.query(query, callback);
-  console.log(query);
+  // SQL query for inserting new doctor data
+  var query = "INSERT INTO `Doctor` (`first_name`, `last_name`, `email`, `password`, `date_of_birth`, `address`, `image`, `cnic`, `contact`, `gender`, `specialist_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+  // Execute the query with the provided values
+  con.query(
+    query,
+    [first_name, last_name, email, password, date_of_birth, address, image, cnic, contact, gender, specialist_id],
+    function (err, results) {
+      if (err) {
+        console.error("Error during database insertion:", err); // Log any error
+        return callback(err); // Pass the error to the callback
+      }
+      
+      // If the insertion is successful, return the results
+      callback(null, results);
+    }
+  );
 };
 
 module.exports.getAllDoc = function (callback) {
@@ -111,56 +94,97 @@ module.exports.getAllDoc = function (callback) {
   con.query(query, callback);
 };
 
-module.exports.getDocbyId = function (id, callback) {
-  var query = "select * from doctor where id =" + id;
-  con.query(query, callback);
+
+module.exports.getDoctorById = function (id, callback) {
+  const sql = 'SELECT * FROM doctor WHERE doctor_id = ?';
+  con.query(sql, [id], function (err, result) {
+      if (err) {
+          console.error('Error executing query:', err);
+          return callback(err, null);
+      }
+      callback(null, result);
+  });
 };
+// Function to update doctor details
+module.exports.updateDoctor = function (
+  doctor_id,
+  first_name,
+  last_name,
+  email,
+  date_of_birth,
+  gender,
+  address,
+  phone,
+  image,
+  callback
+) {
+  // SQL query for updating doctor information
+  var query = `UPDATE Doctor SET 
+    first_name = ?, 
+    last_name = ?, 
+    email = ?, 
+    date_of_birth = ?, 
+    gender = ?, 
+    address = ?, 
+    contact = ?, 
+    image = ?
+    WHERE doctor_id = ?`;
+// console.log(date_of_birth);
+  con.query(
+    query,
+    [first_name, last_name, email, date_of_birth, gender, address, phone, image, doctor_id],
+    function (err, results) {
+      if (err) {
+        console.error("Error updating doctor:", err);
+        return callback(err);
+      }
+      callback(null, results);
+    }
+  );
+};
+
 
 module.exports.getEmpbyId = function (id, callback) {
   var query = "select * from employee where id =" + id;
   con.query(query, callback);
 };
 
-module.exports.editDoc = function (
-  id,
-  first_name,
-  last_name,
-  email,
-  dob,
-  gender,
-  address,
-  phone,
-  image,
-  department,
-  biography,
-  callback
-) {
-  var query =
-    "update `doctor` set `first_name`='" +
-    first_name +
-    "', `last_name`='" +
-    last_name +
-    "', `email`='" +
-    email +
-    "', `dob`='" +
-    dob +
-    "',`gender`='" +
-    gender +
-    "',`address`='" +
-    address +
-    "',`phone`='" +
-    phone +
-    "',`image`='" +
-    image +
-    "',`department`='" +
-    department +
-    "',`biography`='" +
-    biography +
-    "' where id=" +
-    id;
-  con.query(query, callback);
-  // console.log(query);
-};
+
+// module.exports.editDoc = function (
+//   doctor_id,
+//   first_name,
+//   last_name,
+//   email,
+//   date_of_birth,
+//   gender,
+//   address,
+//   contact,
+//   image,
+//   callback
+// ) {
+//   var query =
+//     "update `doctor` set `first_name`='" +
+//     first_name +
+//     "', `last_name`='" +
+//     last_name +
+//     "', `email`='" +
+//     email +
+//     "', `dob`='" +
+//     date_of_birth +
+//     "',`gender`='" +
+//     gender +
+//     "',`address`='" +
+//     address +
+//     "',`phone`='" +
+//     contact +
+//     "',`image`='" +
+//     image +
+//     "',`department`='" +
+//     "' where id=" +
+//     doctor_id;
+//     // console.log(query);
+//   con.query(query, callback);
+// };
 
 module.exports.editEmp = function (
   id,

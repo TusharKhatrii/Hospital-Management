@@ -64,13 +64,4 @@ router.post('/delete_appointment/:id',function(req,res){
         res.redirect('/appointment');
     });
 })
-
-
-
-
-
-
-
-
-
 module.exports =router;

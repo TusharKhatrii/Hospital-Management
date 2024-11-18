@@ -67,6 +67,27 @@
 		.login-form a:hover {
 			color: #333;
 		}
+
+		.error-message {
+			background-color: #f8d7da;
+			/* Light red background */
+			color: #721c24;
+			/* Dark red text */
+			border: 1px solid #f5c6cb;
+			/* Border with a slightly darker red */
+			padding: 10px 15px;
+			/* Add space inside the box */
+			border-radius: 5px;
+			/* Rounded corners */
+			margin: 10px 0;
+			/* Space around the message */
+			font-family: Arial, sans-serif;
+			/* Common font */
+			font-size: 14px;
+			/* Readable text size */
+			text-align: center;
+			/* Center-align text */
+		}
 	</style>
 </head>
 
@@ -84,11 +105,16 @@
 				<option value="doctor">Doctor</option>
 			</select>
 			<input type="submit" value="Log In" onclick="click()">
-			<script>
-				function click(){
-					swal ("You are logged in");
-				}
-			</script>
+			<% if (typeof error !=='undefined' ) { %>
+				<div class="error-message">
+					<%= error %>
+				</div>
+				<% } %>
+					<script>
+						function click() {
+							swal("You are logged in");
+						}
+					</script>
 		</form>
 
 		<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script> -->
