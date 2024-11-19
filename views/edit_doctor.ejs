@@ -93,7 +93,8 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form action="/doctors/update_doctor/<%= doctor.doctor_id %>" method="POST">
+                        <form action="/doctors/update_doctor/<%= doctor.doctor_id %>" method="POST"
+                            enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -116,10 +117,11 @@
                                             value="<%= doctor.email %>">
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="date_of_birth">Date of Birth</label>
-                                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
-                                        value="<%= doctor.date_of_birth %>" required>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="date_of_birth">Date of Birth <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+                                    </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group gender-select">
@@ -167,6 +169,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <select class="form-control" name="specialist_id" required>
+                                <% specialties.forEach(function(specialty) { %>
+                                    <option value="<%= specialty.specialist_id %>"
+                                        <%= doctor.specialist_id === specialty.specialist_id ? 'selected' : '' %> >
+                                        <%= specialty.specialist_name %>
+                                    </option>
+                                    <% }) %>
+                            </select>
                             <div class="m-t-20 text-center">
                                 <button class="btn btn-primary submit-btn">Edit Doctor</button>
                             </div>
@@ -176,13 +186,13 @@
 
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                      <% if (typeof message !== 'undefined') { %>
-                        <div class="alert alert-info">
-                          <%= message %>
-                        </div>
-                      <% } %>
+                        <% if (typeof message !=='undefined' ) { %>
+                            <div class="alert alert-info">
+                                <%= message %>
+                            </div>
+                            <% } %>
                     </div>
-                  </div>
+                </div>
             </div>
         </div>
     </div>

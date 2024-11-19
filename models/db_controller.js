@@ -8,7 +8,7 @@ var con = mysql.createConnection({
   user: "root",
   password: "",
   database: "hms",
-  port:3307
+  port: 3307
 });
 
 // Connect to MySQL and run a test query
@@ -35,7 +35,7 @@ module.exports.signup = function (
 ) {
   // SQL query for inserting new data
   var query = "INSERT INTO `Patient` (`first_name`, `last_name`, `email`, `password`, `date_of_birth`, `address`, `cnic`, `contact`, `gender`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-  
+
   con.query(
     query,
     [first_name, last_name, email, password, date_of_birth, address, cnic, contact, gender],
@@ -49,60 +49,69 @@ module.exports.signup = function (
   );
 };
 
+module.exports.getDocId = function(callback){
+  var query = "SELECT MAX(doctor_id) AS maxId FROM Doctor";
+  con.query(query,function(err,res){
+    if(err){
+      console.log("error in getting doctor id");
+      return callback(err);
+    }
 
-// module.exports.getuserid = function (email, callback) {
-//   var query = "select *from verify where email = '" + email + "' ";
-//   con.query(query, callback);
-// };
+    callback(null,res);
 
+  })
+}
 
 module.exports.add_doctor = function (
+  doc_id,
   first_name,
   last_name,
   email,
   password,
   date_of_birth,
   address,
+  image,           // BLOB for the doctor's image
   cnic,
   contact,
   gender,
   specialist_id,  // Specialist ID from the Specialties table
-  image,           // BLOB for the doctor's image
   callback
 ) {
   // SQL query for inserting new doctor data
-  var query = "INSERT INTO `Doctor` (`first_name`, `last_name`, `email`, `password`, `date_of_birth`, `address`, `image`, `cnic`, `contact`, `gender`, `specialist_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+  var query = "INSERT INTO `Doctor` (`doctor_id`,`first_name`, `last_name`, `email`, `password`, `date_of_birth`, `address`, `image`, `cnic`, `contact`, `gender`, `specialist_id`) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   // Execute the query with the provided values
   con.query(
     query,
-    [first_name, last_name, email, password, date_of_birth, address, image, cnic, contact, gender, specialist_id],
+    [doc_id,first_name, last_name, email, password, date_of_birth, address, image, cnic, contact, gender, specialist_id],
     function (err, results) {
       if (err) {
         console.error("Error during database insertion:", err); // Log any error
         return callback(err); // Pass the error to the callback
       }
-      
+
       // If the insertion is successful, return the results
       callback(null, results);
     }
   );
 };
-
-module.exports.getAllDoc = function (callback) {
-  var query = "select * from doctor";
-  con.query(query, callback);
+// Example function to get all doctors with their specialties
+module.exports.getAllDoctorsWithSpecialties = function (callback) {
+  const sql = `
+      SELECT doctor.*, specialties.specialist_name
+      FROM doctor
+      LEFT JOIN specialties ON doctor.specialist_id = specialties.specialist_id
+  `;
+  con.query(sql, callback);
 };
-
 
 module.exports.getDoctorById = function (id, callback) {
   const sql = 'SELECT * FROM doctor WHERE doctor_id = ?';
   con.query(sql, [id], function (err, result) {
-      if (err) {
-          console.error('Error executing query:', err);
-          return callback(err, null);
-      }
-      callback(null, result);
+    if (err) {
+      console.error('Error executing query:', err);
+      return callback(err, null);
+    }
+    callback(null, result);
   });
 };
 // Function to update doctor details
@@ -116,9 +125,10 @@ module.exports.updateDoctor = function (
   address,
   phone,
   image,
+  specialist_id,
   callback
 ) {
-  // SQL query for updating doctor information
+  // SQL query for updating doctor information including specialist_id
   var query = `UPDATE Doctor SET 
     first_name = ?, 
     last_name = ?, 
@@ -127,12 +137,13 @@ module.exports.updateDoctor = function (
     gender = ?, 
     address = ?, 
     contact = ?, 
-    image = ?
+    image = ?,
+    specialist_id = ?
     WHERE doctor_id = ?`;
-// console.log(date_of_birth);
+
   con.query(
     query,
-    [first_name, last_name, email, date_of_birth, gender, address, phone, image, doctor_id],
+    [first_name, last_name, email, date_of_birth, gender, address, phone, image, specialist_id, doctor_id],
     function (err, results) {
       if (err) {
         console.error("Error updating doctor:", err);
@@ -143,48 +154,34 @@ module.exports.updateDoctor = function (
   );
 };
 
+module.exports.getAllSpecialties = function (callback) {
+  const query = `SELECT specialist_id,specialist_name FROM specialties`;
+  con.query(query, function (err, results) {
+    if (err) {
+      return callback(err);
+    }
+    // console.log("Specialties fetched from DB:", results);
+    callback(null, results);
+  });
+};
+module.exports.deleteDoctor = function (id, callback) {
+  // Use a parameterized query to prevent SQL injection
+  var query = "DELETE FROM doctor WHERE doctor_id = ?";
+
+  con.query(query, [id], function (err, results) {
+    if (err) {
+      console.error("Error updating doctor:", err);
+      return callback(err);
+    }
+    callback(null, results);
+  });
+};
 
 module.exports.getEmpbyId = function (id, callback) {
   var query = "select * from employee where id =" + id;
   con.query(query, callback);
 };
 
-
-// module.exports.editDoc = function (
-//   doctor_id,
-//   first_name,
-//   last_name,
-//   email,
-//   date_of_birth,
-//   gender,
-//   address,
-//   contact,
-//   image,
-//   callback
-// ) {
-//   var query =
-//     "update `doctor` set `first_name`='" +
-//     first_name +
-//     "', `last_name`='" +
-//     last_name +
-//     "', `email`='" +
-//     email +
-//     "', `dob`='" +
-//     date_of_birth +
-//     "',`gender`='" +
-//     gender +
-//     "',`address`='" +
-//     address +
-//     "',`phone`='" +
-//     contact +
-//     "',`image`='" +
-//     image +
-//     "',`department`='" +
-//     "' where id=" +
-//     doctor_id;
-//     // console.log(query);
-//   con.query(query, callback);
-// };
 
 module.exports.editEmp = function (
   id,
@@ -211,11 +208,7 @@ module.exports.editEmp = function (
   con.query(query, callback);
 };
 
-module.exports.deleteDoc = function (id, callback) {
-  //console.log("i m here");
-  var query = "delete from doctor where id=" + id;
-  con.query(query, callback);
-};
+
 
 module.exports.deleteEmp = function (id, callback) {
   //console.log("i m here");

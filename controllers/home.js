@@ -117,29 +117,33 @@ router.get('*', function(req, res, next){
 
 
 router.get('/',function(req,res){
-    db.getAllDoc(function(err,result){
+    db.getAllDoctorsWithSpecialties(function(err,result){
         db.getallappointment(function(err,result1){
         var total_doc = result.length ;
         var appointment = result1.length;
          
         res.render('home.ejs',{doc : total_doc , doclist : result, appointment : appointment, applist : result1});
         });
-        //console.log(result.length);
-        
     });
    
 });
 
-
-router.get('/doctors',function(req,res){
-
-    db.getAllDoc(function(err,result){
-
-        res.render('doctors.ejs',{list:result});
-
+router.get('/doctors', (req, res) => {
+    db.getAllDoctorsWithSpecialties((err, doctors) => {
+        if (err) {
+            return res.status(500).send('Error fetching doctor list');
+        }
+        // Format date of birth for each doctor
+        doctors.forEach(doctor => {
+            const date = new Date(doctor.date_of_birth);
+            if (!isNaN(date.getTime())) { // Check if the date is valid
+                doctor.date_of_birth = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            } else {
+                doctor.date_of_birth = ''; // Handle case where date is invalid
+            }
+        });
+        res.render('doctors.ejs', { list: doctors }); // Pass the formatted doctors list to the view
     });
-    
-    
 });
 
 router.get('/edit_doctor/:id', function (req, res) {
@@ -182,9 +186,7 @@ router.post('/edit_doctor/:id', function (req, res) {
 router.get('/departments',function(req,res){
 
     db.getalldept(function(err,result){
-
         res.render('departments.ejs',{list:result});
-
     });
     
 });
@@ -199,10 +201,9 @@ router.post('/add_departments',function(req,res){
     db.add_dept(name,desc,function(err,result){
         res.redirect('/home/departments');
     });
-});
+}); 
 
 router.get('/delete_department/:id',function(req,res){
-
     var id = req.params.id;
     db.getdeptbyId(id,function(err,result){
         res.render('delete_department.ejs',{list:result});
@@ -252,14 +253,8 @@ router.post('/profile',function(req,res){
                     res.send("profile edited successfully");
                 }
                 if(!result1){ res.send("old password did not match");}
-                   
-                
-
             });
         }
-        
-
-
     }) ;
 });
 

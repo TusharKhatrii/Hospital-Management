@@ -10,6 +10,9 @@ var nodmailer = require ('nodemailer');
 var crypto = require ('crypto');
 var expressValidator = require ('express-validator');
 var  sweetalert = require('sweetalert2');
+const flash = require('connect-flash');
+
+
 var app = express();
 
 
@@ -39,12 +42,22 @@ var chat = require ('./controllers/chat');
 
 var app = express();
 
+app.use(session({
+    secret: 'your-secret-key', // Change this for production
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set to true if using https
+}));
 
+app.use(flash());
 app.set('view engine ', 'ejs');
 
 
-
-
+app.use((req, res, next) => {
+    res.locals.successMessages = req.flash('success');
+    res.locals.errorMessages = req.flash('error');
+    next();
+});
 app.use(express.static('./public'));
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
@@ -56,6 +69,7 @@ var server =app.listen(3000 , function(){
 
     console.log('server started');
 });
+
 
 app.use('/login' ,login);
 app.use('/home' , home);

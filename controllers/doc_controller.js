@@ -6,6 +6,7 @@ var fs = require('fs');
 var path = require('path');
 
 
+
 var db = require.main.require('./models/db_controller');
 
 
@@ -34,52 +35,109 @@ var upload = multer({ storage: storage });
 
 
 router.get('/', function (req, res) {
-    db.getAllDoc(function (err, result) {
+    db.getAllDoctorsWithSpecialties(function (err, result) {
         if (err)
             throw err;
+        result.forEach(doctor => {
+            const date = new Date(doctor.date_of_birth);
+            if (!isNaN(date.getTime())) { // Check if the date is valid
+                doctor.date_of_birth = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            } else {
+                doctor.date_of_birth = ''; // Handle case where date is invalid
+            }
+        });
         res.render('doctors.ejs', { list: result })
     });
-
 });
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
 router.get('/add_doctor', function (req, res) {
-    db.getalldept(function (err, result) {
-        res.render('add_doctor.ejs', { list: result });
+    db.getAllSpecialties(function (err, result) {
+        if (err) {
+            return res.status(500).send('Error fetching specialties.');
+        }
+        res.render('add_doctor.ejs', { list: result }); // Pass specialties to EJS
     });
 });
 
 router.post('/add_doctor', upload.single("image"), function (req, res) {
-    // console.log(req.body.first_name);
-    db.add_doctor(req.body.first_name, req.body.last_name, req.body.email, req.body.dob, req.body.gender, req.body.address, req.body.phone, req.file.filename, req.body.department, req.body.biography);
-    if (db.add_doctor) {
-        console.log('1 doctor inserted');
-    }
-    res.redirect('add_doctor.ejs');
-});
+    console.log("Received POST request for adding doctor.");
+    const { 
+        first_name, 
+        last_name, 
+        email, 
+        password, 
+        date_of_birth, 
+        address, 
+        cnic, 
+        contact, 
+        gender, 
+        specialist_id
+    } = req.body; // Destructure req.body
 
-router.get('/edit_doctor/:id', function (req, res) {
+    const image = req.file ? req.file.buffer : null; // Use the file buffer if image is uploaded
+    // Use your db method for adding a doctor
+    if (!first_name || !last_name || !email || !password || !contact || !cnic) {
+        return res.status(400).send("Please fill all required fields.");
+    }
+
+    // Step 1: Fetch the last doctor_id
+    db.getDocId(function(err, result) {
+        if (err) {
+            console.error('Error fetching max doctor_id:', err);
+            return res.status(500).send('Error fetching last doctor ID.');
+        }
+
+        // Step 2: Calculate new doctor_id
+        const newDoctorId = result[0].maxId ? result[0].maxId + 1 : 1; // Start at 1 if no records exist
+
+        // Step 3: Insert the new doctor record with the calculated doctor_id
+        db.add_doctor(newDoctorId, first_name, last_name, email, password, date_of_birth, address, image, cnic, contact, gender, specialist_id, function (err, result) {
+            if (err) {
+                console.error("Error adding doctor:", err);
+                return res.status(500).send('Error adding doctor.');
+            }
+        console.log('1 doctor inserted');
+
+        // Redirect to the doctor list or a success page
+        req.flash('success', 'Doctor added successfully with ID: ',newDoctorId);
+        res.redirect('/doctors'); // Change this to your intended after-insertion page
+    });
+});
+}); 
+
+router.get('/edit_doctor/:id', (req, res) => {
     const doctorId = req.params.id;
     db.getDoctorById(doctorId, (err, doctor) => {
         if (err) {
             return res.status(500).send('Error fetching doctor details');
         }
         if (doctor.length > 0) {
-            res.render('edit_doctor.ejs', { doctor: doctor[0] });  // Pass doctor data to the view
+            db.getAllSpecialties((err, specialties) => {
+                if (err) {
+                    return res.status(500).send('Error fetching specialties');
+                }
+                // Render the EJS view with both doctor and specialties data
+                // console.log(specialties);
+                res.render('edit_doctor.ejs', {
+                    doctor: doctor[0],
+                    specialties: specialties
+                });
+            });
         } else {
             res.status(404).send('Doctor not found');
         }
     });
 });
 
-router.post('/edit_doctor/:id',upload.single("image"), function (req, res) {
+router.post('/edit_doctor/:id', upload.single("image"), function (req, res) {
     var id = req.params.id;
     const image = req.file ? req.file.buffer : null;
-    db.updateDoctor(id, req.body.first_name, req.body.last_name, req.body.email, req.body.date_of_birth, req.body.gender, req.body.address, req.body.phone,image, function (err, result) {
+    db.updateDoctor(id, req.body.first_name, req.body.last_name, req.body.email, req.body.date_of_birth, req.body.gender, req.body.address, req.body.phone, image, function (err, result) {
         if (err) throw err;
-        res.render('edit_doctor.ejs',{list:result});
+        res.render('edit_doctor.ejs', { list: result });
         res.redirect('back');
     });
 });
@@ -94,68 +152,74 @@ router.post('/update_doctor/:id', upload.single("image"), (req, res) => {
         date_of_birth,
         gender,
         address,
-        phone
+        phone,
+        specialist_id // Ensure this is included
     } = req.body;
-    
+
+
+    // Check if an image was uploaded
+
     // Check if an image was uploaded
     const image = req.file ? req.file.buffer : null;
-    
-    db.updateDoctor(id, first_name, last_name, email, date_of_birth, gender, address, phone, image, (err, result) => {
+
+    db.updateDoctor(id, first_name, last_name, email, date_of_birth, gender, address, phone, image, specialist_id, (err, result) => {
         if (err) {
             console.error("Error during update:", err);
             return res.render('edit_doctor.ejs', {
                 message: 'Update failed. Please try again.',
                 doctor: req.body,
-                error: true
+                error: true,
+                specialties: [] // Ensure specialties are available when rendering
             });
         }
-        
-        // Render the edit page with a success message
-        // console.log(req.body.date_of_birth);
-        res.render('edit_doctor.ejs', {
-            message: 'Doctor updated successfully!',
-            doctor: req.body,
-            error: false
+
+        // Fetch the updated doctor details to render again
+        db.getDoctorById(id, (err, updatedDoctor) => {
+            if (err) {
+                return res.status(500).send('Error fetching updated doctor details');
+            }
+            if (updatedDoctor.length > 0) {
+                db.getAllSpecialties((err, specialties) => {
+                    if (err) {
+                        return res.status(500).send('Error fetching specialties');
+                    }
+                    return res.render('edit_doctor.ejs', {
+                        message: 'Doctor updated successfully!',
+                        doctor: updatedDoctor[0], // Updated doctor details
+                        specialties: specialties,
+                        error: false
+                    });
+                });
+            } else {
+                res.status(404).send('Doctor not found');
+            }
         });
     });
 });
 
-router.get('/delete_doctor/:id', function (req, res) {
-    // console.log('Doctor data:', doctor[0]);  // Debugging the data
-    var id = req.params.id;
-    db.getDocbyId(id, function (err, result) {
-        res.render('delete_doctor.ejs', { list: result })
-    });
+router.get('/delete_doctor/:id', (req, res) => {
+    const id = req.params.id;
+    // console.log("Trying to delete doctor with ID:", id); // Log for debugging
 
+    db.deleteDoctor(id, (err, result) => {
+        if (err) {
+            console.error("Error deleting doctor:", err);
+            return res.status(500).send('Error deleting doctor.');
+        }
 
-});
-
-router.post('/delete_doctor/:id', function (req, res) {
-    var id = req.params.id;
-    db.deleteDoc(id, function (err, result) {
-
+        // Check if any rows were affected/deleted
+        if (result.affectedRows === 0) {
+            console.log("Doctor not found or already deleted."); // Log if not found
+            return res.status(404).send('Doctor not found.');
+        }
+        req.flash('success', 'Doctor deleted successfully');
         res.redirect('/doctors');
     });
 });
-//  router.get('/search',function(req,res){
-//      res.rende
-//      var key = req.body.search;
-//      console.log(key);
-//     db.searchDoc(key,function(err, rows, fields) {
-//         if (err) throw err;
-//       var data=[];
-//       for(i=0;i<rows.length;i++)
-//         {
-//           data.push(rows[i].first_name);
-//         }
-//         res.end(JSON.stringify(data));
-//       });
-//     });
-
 
 router.get('/', function (req, res) {
 
-    db.getAllDoc(function (err, result) {
+    db.getAllDoctorsWithSpecialities(function (err, result) {
         if (err)
             throw err;
         res.render('doctors.ejs', { list: result })
@@ -167,8 +231,6 @@ router.get('/', function (req, res) {
 router.post('/search', function (req, res) {
     var key = req.body.search;
     db.searchDoc(key, function (err, result) {
-        console.log(result);
-
         res.render('doctors.ejs', { list: result });
     });
 });
