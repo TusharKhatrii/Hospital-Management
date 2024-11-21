@@ -4,11 +4,11 @@ var db = require.main.require ('./models/db_controller');
 var bodyPaser = require ('body-parser');
 
 router.get('*', function(req, res, next){
-	if(req.cookies['username'] == null){
-		res.redirect('/login');
-	}else{
+	// if(req.cookies['username'] == null){
+	// 	res.redirect('/login');
+	// }else{
 		next();
-	}
+	// }
 });
 
 router.get('/',function(req,res){

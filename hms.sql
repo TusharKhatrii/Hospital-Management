@@ -1,6 +1,6 @@
--- DROP DATABASE IF EXISTS hospital_management;
--- CREATE DATABASE hospital_management;
--- USE hospital_management;
+DROP DATABASE IF EXISTS hms;
+CREATE DATABASE hms;
+USE hms;
 
 DROP TABLE IF EXISTS `Roles`;
 CREATE TABLE `Roles` (
@@ -76,8 +76,8 @@ DROP TABLE IF EXISTS `SCHEDULE`;
 CREATE TABLE `SCHEDULE` (
   `Schedule_id` INT PRIMARY KEY AUTO_INCREMENT,
   `title` VARCHAR(50),
-  `start_time` DATE,
-  `end_time` DATE,
+  `start_time` Time,
+  `end_time` Time,
   `NOP` INT,
   `doctor_id` INT,
   FOREIGN KEY (`doctor_id`) REFERENCES `Doctor`(`doctor_id`)
@@ -94,7 +94,7 @@ CREATE TABLE `Schedule_Days` (
 DROP TABLE IF EXISTS `appointment`;
 CREATE TABLE `appointment` (
   `appointment_id` INT PRIMARY KEY AUTO_INCREMENT,
-  `appintment_number` INT,
+  `appointment_num` INT,
   `date` DATE,
   `status` VARCHAR(20),
   `patient_id` INT,
@@ -182,17 +182,17 @@ VALUES
   (1, 'Nurse Anna', 'Smith', 'nurse.anna@example.com', 'nurse_password', '1988-02-15', '999 Maple St', 9998887777, 9998887777, 'Female', 2),
   (2, 'Receptionist Ben', 'Johnson', 'receptionist.ben@example.com', 'receptionist_password', '1993-09-22', '333 Oak St', 3334445555, 3334445555, 'Male', 1);
 
-INSERT INTO SCHEDULE (Schedule_id, title, start_time, NOP, doctor_id)
+INSERT INTO SCHEDULE (Schedule_id, title, start_time, end_time,NOP, doctor_id)
 VALUES
-  (1, 'Morning Clinic', '2023-11-20', 20, 1),
-  (2, 'Evening Clinic', '2023-11-21', 15, 2);
+  (1, 'Morning Clinic', '5:00:00','7:00:00',50, 1),
+  (2, 'Evening Clinic', '7:00:00','9:00:00',50, 2);
 
 INSERT INTO Schedule_Days (sd_id, DAY, Schedule_id)
 VALUES
   (1, 'Monday', 1),
   (2, 'Wednesday', 2);
 
-INSERT INTO appointment (appointment_id, appintment_number, date, status, patient_id, Schedule_id)
+INSERT INTO appointment (appointment_id, appointment_num, date, status, patient_id, Schedule_id)
 VALUES
   (1, 101, '2023-11-20', 'Confirmed', 1, 1),
   (2, 102, '2023-11-21', 'Pending', 2, 2);

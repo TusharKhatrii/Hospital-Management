@@ -213,29 +213,29 @@
 								<thead>
 									<tr>
 										<th>Appointment ID</th>
+                                        <th>Appointment Num</th>
+                                        <th>Patient id</th>
 										<th>Patient Name</th>
-										<th>Department</th>
+										<th>Doctor id</th>
 										<th>Doctor Name</th>
-										
 										<th>Appointment Date</th>
-										<th>Appointment Time</th>
-                                        <th>Patient Email</th>
-                                        <th>Patient Phone</th>
+										<th>Start Time</th>
+                                        <th>End Time</th>
 										<th class="text-right">Action</th>
 									</tr>
 								</thead>
 								<tbody>
                                     <% for (var i = 0; i < list.length; i++){ %>
 									<tr>
-										<td><%= list[i].id %></td>
-										
-										<td><%= list[i].patient_name %></td>
-										<td><%= list[i].department %></td>
-										<td><%= list[i].doctor_name %></td>
+										<td><%= list[i].appointment_id %></td>
+                                        <td><%= list[i].appointment_num %></td>
+										<td><%= list[i].patient_id %></td>
+										<td><%= list[i].pname %></td>
+										<td><%= list[i].doctor_id %></td>
+										<td><%= list[i].dname %></td>
 										<td><%= list[i].date %></td>
-                                        <td><%= list[i].time %></td>
-                                        <td><%= list[i].email %></td>
-                                        <td><%= list[i].phone %></td>
+                                        <td><%= list[i].start_time %></td>
+                                        <td><%= list[i].end_time %></td>
 										
 										<td class="text-right">
 											<div class="dropdown dropdown-action">
