@@ -2,6 +2,7 @@
 <html lang="en">
 
 
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
@@ -65,11 +66,11 @@
                         <li>
                             <a href="/home"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="/doctors"><i class="fa fa-user-md"></i> <span>Doctors</span></a>
                         </li>
-                        <li>
-                            <a href="/patients"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+                        <li class="active">
+                            <a href="/Patients"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
                         <li>
                             <a href="/appointment"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
@@ -104,11 +105,11 @@
         <div class="content">
             <div class="row">
                 <div class="col-sm-4 col-3">
-                    <h4 class="page-title">Doctors</h4>
+                    <h4 class="page-title">Patients</h4>
                 </div>
                 <div class="col-sm-8 col-9 text-right m-b-20">
-                    <a href="http://localhost:3000/doctors/add_doctor"
-                        class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Doctor</a>
+                    <a href="/Patients/add_patient"
+                        class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Patient</a>
                 </div>
                 <form action="" method="POST">
                     <div class="col-sm-6 col-md-12">
@@ -125,7 +126,7 @@
                 <div class="col-md-12">
                     <div class="table-responsive">
                         <!-- Display success message -->
-                        <% if (successMessages.length > 0) { %>
+                        <% if (successMessages.length> 0) { %>
                             <div class="alert alert-success">
                                 <%= successMessages.join(', ') %>
                             </div>
@@ -133,13 +134,12 @@
                         
                         <% if (errorMessages.length > 0) { %>
                             <div class="alert alert-danger">
-                                <%= errorMessages.join(', ') %>
+                                <%= errorMessages.join(' , ') %>
                             </div>
                         <% } %>
                         <table class="table table-striped custom-table">
                             <thead>
                                 <tr>
-                                    <th style="min-width:100px;">Image</th>
                                     <th>ID</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
@@ -148,7 +148,6 @@
                                     <th>Address</th>
                                     <th>Gender</th>
                                     <th>Contact</th>
-                                    <th>Specialist</th>
                                     <th class="text-right">Action</th>
                                 </tr>
                             </thead>
@@ -156,13 +155,7 @@
                                 <% for (var i=0; i < list.length; i++){ %>
                                     <tr>
                                         <td>
-                                            <img width="50" height="50"
-                                                src="/assets/images/upload_images/<%= list[i].image %>"
-                                                class="rounded-circle" alt="">
-                                            <h2></h2>
-                                        </td>
-                                        <td>
-                                            <%= list[i].doctor_id %>
+                                            <%= list[i].patient_id %>
                                         </td>
                                         <td>
                                             <%= list[i].first_name %>
@@ -185,19 +178,17 @@
                                         <td>
                                             <%= list[i].contact %>
                                         </td>
-                                        <td>
-                                            <%= list[i].specialist_name %>
-                                        </td>
                                         <td class="text-right">
                                             <div class="dropdown dropdown-action">
                                                 <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown"
                                                     aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="/patients/edit_patient/<%= list[i].patient_id %>">
+                                                        <i class="fa fa-pencil m-r-5"></i> Edit
+                                                    </a>
+                                                    
                                                     <a class="dropdown-item"
-                                                        href="/doctors/edit_doctor/<%= list[i].doctor_id %>"><i
-                                                            class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                    <a class="dropdown-item"
-                                                        href="http://localhost:3000/doctors/delete_doctor/<%= list[i].doctor_id %>"><i
+                                                        href="/patients/delete_patient/<%= list[i].patient_id %>"><i
                                                             class="fa fa-trash-o m-r-5"></i> Delete</a>
                                                 </div>
                                             </div>
@@ -224,8 +215,4 @@
         <script type="text/javascript" src="/assets/js/typeahead.min.js"></script>
         <script src="/assets/js/app.js"></script>
 </body>
-
-
-<!-- doctors23:17-->
-
 </html>
