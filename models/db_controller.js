@@ -8,7 +8,7 @@ var con = mysql.createConnection({
   user: "root",
   password: "",
   database: "hms",
-  port: 3307
+  // port: 3307
 });
 
 // Connect to MySQL and run a test query

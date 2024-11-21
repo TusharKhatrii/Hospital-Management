@@ -13,7 +13,7 @@ var con = mysql.createConnection({
     user: 'root',
     password: '',
     database: 'hms',
-    port: 3307 // Updated to match your settings
+    // port: 3307 // Updated to match your settings
 });
 
 // Middleware
