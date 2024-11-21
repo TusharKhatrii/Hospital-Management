@@ -49,15 +49,15 @@ module.exports.signup = function (
   );
 };
 
-module.exports.getDocId = function(callback){
+module.exports.getDocId = function (callback) {
   var query = "SELECT MAX(doctor_id) AS maxId FROM Doctor";
-  con.query(query,function(err,res){
-    if(err){
+  con.query(query, function (err, res) {
+    if (err) {
       console.log("error in getting doctor id");
       return callback(err);
     }
 
-    callback(null,res);
+    callback(null, res);
 
   })
 }
@@ -82,7 +82,7 @@ module.exports.add_doctor = function (
   // Execute the query with the provided values
   con.query(
     query,
-    [doc_id,first_name, last_name, email, password, date_of_birth, address, image, cnic, contact, gender, specialist_id],
+    [doc_id, first_name, last_name, email, password, date_of_birth, address, image, cnic, contact, gender, specialist_id],
     function (err, results) {
       if (err) {
         console.error("Error during database insertion:", err); // Log any error
@@ -164,18 +164,132 @@ module.exports.getAllSpecialties = function (callback) {
     callback(null, results);
   });
 };
+
 module.exports.deleteDoctor = function (id, callback) {
   // Use a parameterized query to prevent SQL injection
   var query = "DELETE FROM doctor WHERE doctor_id = ?";
 
   con.query(query, [id], function (err, results) {
     if (err) {
-      console.error("Error updating doctor:", err);
+      console.error("Error deleting doctor:", err);
       return callback(err);
     }
     callback(null, results);
   });
 };
+
+module.exports.getAllPatients = function (callback) {
+  var query = `SELECT * FROM PATIENT`;
+  con.query(query, function (err, res) {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, res);
+  })
+};
+
+module.exports.getPatientById = function (id, callback) {
+  var query = `SELECT * FROM PATIENT WHERE PATIENT_ID = ?`;
+  con.query(query, [id], function (err, result) {
+    if (err) {
+      console.error('Error executing query:', err);
+      return callback(err, null);
+    }
+    callback(null, result);
+  });
+}
+
+module.exports.updatePatient = function (
+  patient_id,
+  first_name,
+  last_name,
+  email,
+  date_of_birth,
+  address,
+  phone,
+  gender,
+  callback
+) {
+  var query = `UPDATE Patient SET 
+    first_name = ?, 
+    last_name = ?, 
+    email = ?, 
+    date_of_birth = ?, 
+    address = ?, 
+    contact = ?,
+    gender = ?
+    WHERE patient_id = ?`;
+
+  con.query(
+    query,
+    [first_name, last_name, email, date_of_birth, address, phone, gender, patient_id],
+    function (err, results) {
+      if (err) {
+        console.error("Error updating patient:", err);
+        return callback(err);
+      }
+      console.log("Update successful:", results);
+      callback(null, results);
+    }
+  );
+};
+
+module.exports.deletePatient = function (id, callback) {
+  var query = "DELETE FROM patient WHERE patient_id = ?";
+
+  con.query(query, [id], function (err, results) {
+    if (err) {
+      console.error("Error deleting patient:", err);
+      return callback(err);
+    }
+    callback(null, results);
+  });
+};
+
+//getPaitentID and addPatinet...
+module.exports.getPatientId = function (callback) {
+  var query = `SELECT MAX(patient_id) AS maxId FROM patient`;
+  con.query(query, function (err, res) {
+    if (err) {
+      console.log("error in getting patient id");
+      return callback(err);
+    }
+    callback(null, res);
+  })
+};
+
+
+module.exports.addPatient = function (
+  patient_id,
+  first_name,
+  last_name,
+  email,
+  password,
+  date_of_birth,
+  address,
+  cnic,
+  contact,
+  gender,
+  callback
+) {
+  var query = `INSERT INTO PATIENT(patient_id,first_name,last_name,email,password,date_of_birth,address,cnic,contact,gender) VALUES (?,?,?,?,?,?,?,?,?,?)`;
+  con.query(
+    query,
+    [patient_id, first_name, last_name, email, password, date_of_birth, address, cnic, contact, gender],
+    function (err, results) {
+      if (err) {
+        console.error("Error during database insertion:", err); // Log any error
+        return callback(err); // Pass the error to the callback
+      }
+
+      // If the insertion is successful, return the results
+      callback(null, results);
+    }
+  );
+};
+
+
+
 
 module.exports.getEmpbyId = function (id, callback) {
   var query = "select * from employee where id =" + id;

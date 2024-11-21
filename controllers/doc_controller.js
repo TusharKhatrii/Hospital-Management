@@ -63,7 +63,6 @@ router.get('/add_doctor', function (req, res) {
 });
 
 router.post('/add_doctor', upload.single("image"), function (req, res) {
-    console.log("Received POST request for adding doctor.");
     const { 
         first_name, 
         last_name, 
@@ -215,16 +214,6 @@ router.get('/delete_doctor/:id', (req, res) => {
         req.flash('success', 'Doctor deleted successfully');
         res.redirect('/doctors');
     });
-});
-
-router.get('/', function (req, res) {
-
-    db.getAllDoctorsWithSpecialities(function (err, result) {
-        if (err)
-            throw err;
-        res.render('doctors.ejs', { list: result })
-    });
-
 });
 
 

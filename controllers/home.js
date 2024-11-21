@@ -183,54 +183,25 @@ router.post('/edit_doctor/:id', function (req, res) {
     });
 });
 
-router.get('/departments',function(req,res){
-
-    db.getalldept(function(err,result){
-        res.render('departments.ejs',{list:result});
-    });
-    
-});
-
-router.get('/add_departments',function(req,res){
-    res.render('add_departments.ejs');
-});
-
-router.post('/add_departments',function(req,res){
-    var name = req.body.dpt_name;
-    var desc = req.body.desc;
-    db.add_dept(name,desc,function(err,result){
-        res.redirect('/home/departments');
-    });
-}); 
-
-router.get('/delete_department/:id',function(req,res){
-    var id = req.params.id;
-    db.getdeptbyId(id,function(err,result){
-        res.render('delete_department.ejs',{list:result});
-    });
-});
-
-router.post('/delete_department/:id',function(req,res){
-    var id = req.params.id;
-    db.delete_department(id,function(err,result){
-        res.redirect('/home/departments');
-    });
-});
-
-router.get('/edit_department/:id',function(req,res){
-    var id = req.params.id;
-    db.getdeptbyId(id,function(err,result){
-        res.render('edit_department.ejs',{list:result});
+router.get('/patients', (req, res) => {
+    db.getAllPatients(function(err,patients){
+        if(err)
+        {
+            console.error("Error updating doctor details: ", err);
+            return res.status(500).send("Server Error");   
+        }
+        patients.forEach(patient => {
+            const date = new Date(patient.date_of_birth);
+            if (!isNaN(date.getTime())) { // Check if the date is valid
+                patient.date_of_birth = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            } else {
+                patient.date_of_birth = ''; // Handle case where date is invalid
+            }
+        });
+        res.render('patients.ejs', { list: patients }); // Replace `null` with actual data if needed
     })
 });
 
-
-router.post('/edit_department/:id',function(req,res){
-
-    db.edit_dept(req.params.id,req.body.dpt_name,req.body.desc,function(err,result){
-        res.redirect('/home/departments');
-    });
-});
 
 router.get('/profile',function(req,res){
     var username = req.cookies['username'];
