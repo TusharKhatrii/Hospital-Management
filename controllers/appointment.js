@@ -90,7 +90,7 @@ router.post('/add_appointment', function (req, res) {
 
 router.get('/edit_appointment/:id', function (req, res) {
     var id = req.params.id;
-    db.getappointmentbyid(id, function (err, result) {
+    db.getappointmentbyid1(id, function (err, result) {
         res.render('edit_appointment.ejs', { list: result });
     });
 });
@@ -104,7 +104,7 @@ router.post('/edit_appointment/:id', function (req, res) {
 
 router.get('/delete_appointment/:id', function (req, res) {
     var id = req.params.id;
-    db.getappointmentbyid(id, function (err, result) {
+    db.getappointmentbyid1(id, function (err, result) {
         res.render('delete_appointment.ejs', { list: result });
     })
 
