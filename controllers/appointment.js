@@ -12,9 +12,21 @@ router.get('*', function(req, res, next){
 });
 
 router.get('/',function(req,res){
-    db.getallappointment(function(err,result){
-        console.log(result);
-        res.render('appointment.ejs',{list :result});
+    db.getallappointment(function(err,appointments){
+        if (err) {
+            console.error("Error updating Patient details: ", err);
+            return res.status(500).send("Server Error");
+        }
+        appointments.forEach(appointment => {
+            const date = new Date(appointment.appointment_date);
+            if (!isNaN(date.getTime())) { // Check if the date is valid
+                appointment.appointment_date = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            } else {
+                appointment.appointment_date = ''; // Handle case where date is invalid
+            }
+        });
+        // console.log(result);
+        res.render('appointment.ejs',{list :appointments});
     })
     
 });

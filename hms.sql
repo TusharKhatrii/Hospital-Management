@@ -95,7 +95,7 @@ DROP TABLE IF EXISTS `appointment`;
 CREATE TABLE `appointment` (
   `appointment_id` INT PRIMARY KEY AUTO_INCREMENT,
   `appointment_num` INT,
-  `date` DATE,
+  `appointment_date` DATE,
   `status` VARCHAR(20),
   `patient_id` INT,
   `Schedule_id` INT,
@@ -192,7 +192,7 @@ VALUES
   (1, 'Monday', 1),
   (2, 'Wednesday', 2);
 
-INSERT INTO appointment (appointment_id, appointment_num, date, status, patient_id, Schedule_id)
+INSERT INTO appointment (appointment_id, appointment_num, appointment_date, status, patient_id, Schedule_id)
 VALUES
   (1, 101, '2023-11-20', 'Confirmed', 1, 1),
   (2, 102, '2023-11-21', 'Pending', 2, 2);

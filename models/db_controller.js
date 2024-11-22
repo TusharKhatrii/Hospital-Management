@@ -392,7 +392,7 @@ module.exports.add_appointment = function (
 };
 
 module.exports.getallappointment = function (callback) {
-  var query = "select a.appointment_id, a.appointment_num, p.patient_id,  CONCAT(p.first_name, ' ', p.last_name) AS pname,d.doctor_id ,CONCAT(d.first_name, ' ', d.last_name) AS dname, a.date, s.start_time, s.end_time from appointment a join patient p on p.patient_id = a.patient_id join schedule s on s.schedule_id = a.schedule_id join doctor d on d.doctor_id = s.schedule_id";
+  var query = "select a.appointment_id, a.appointment_num, p.patient_id,  CONCAT(p.first_name, ' ', p.last_name) AS pname,d.doctor_id ,CONCAT(d.first_name, ' ', d.last_name) AS dname, a.appointment_date, s.start_time, s.end_time from appointment a join patient p on p.patient_id = a.patient_id join schedule s on s.schedule_id = a.schedule_id join doctor d on d.doctor_id = s.schedule_id";
   con.query(query, callback);
 };
 
