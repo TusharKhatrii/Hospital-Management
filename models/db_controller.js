@@ -8,7 +8,7 @@ var con = mysql.createConnection({
   user: "root",
   password: "",
   database: "hms",
-  // port: 3307
+  port: 3307
 });
 
 // Connect to MySQL and run a test query
@@ -104,12 +104,12 @@ module.exports.getAllDoctorsWithSpecialties = function (callback) {
   con.query(sql, callback);
 };
 
-module.exports.getAllDoctors_with_schedule = function (callback) {
-  const sql = `
-     SELECT *, CONCAT(D.first_name,D.last_name) AS dname FROM doctor D JOIN SCHEDULE S ON S.doctor_id = D.doctor_id
-  `;
-  con.query(sql, callback);
-};
+// module.exports.getAllDoctors_with_schedule = function (callback) {
+//   const sql = `
+//      SELECT *, CONCAT(D.first_name,D.last_name) AS dname FROM doctor D JOIN SCHEDULE S ON S.doctor_id = D.doctor_id
+//   `;
+//   con.query(sql, callback);
+// };
 
 module.exports.getDoctorById = function (id, callback) {
   const sql = 'SELECT * FROM doctor WHERE doctor_id = ?';
@@ -305,7 +305,49 @@ module.exports.addPatient = function (
 };
 
 
+module.exports.getAllSchedule = function (callback) {
+  var query = `SELECT * FROM schedule`;
+  con.query(query, function (err, results) {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, results);
+  });
+};
 
+module.exports.getAppointmentId = function (callback) {
+  var query = `SELECT MAX(appointment_id) AS maxId FROM appointment`;
+  con.query(query, function (err, res) {
+    if (err) {
+      console.log("error in getting appointment id");
+      return callback(err);
+    }
+    callback(null, res);
+  })
+};
+
+module.exports.addAppointment = function (
+  appointment_id,
+  appointment_number,
+  appointment_date,
+  status,
+  patient_id,
+  schedule_id,
+  callback
+) {
+  var query = `INSERT INTO APPOINTMENT(appointment_id,appointment_num,appointment_date,status,patient_id,schedule_id) VALUES (?,?,?,?,?,?)`;
+  con.query(
+    query,
+    [appointment_id, appointment_number, appointment_date, status, patient_id, schedule_id],
+    function (err, results) {
+      if (err) {
+        console.error("Error during database insertion:", err);
+        return callback(err);
+      }
+      callback(null, results);
+    }
+  );
+};
 
 module.exports.getEmpbyId = function (id, callback) {
   var query = "select * from employee where id =" + id;
@@ -378,36 +420,8 @@ module.exports.getcomplain = function (callback) {
   con.query(query, callback);
 };
 
-module.exports.add_appointment = function (
-  p_name,
-  department,
-  d_name,
-  date,
-  time,
-  email,
-  phone,
-  callback
-) {
-  var query =
-    "insert into appointment (patient_name,department,doctor_name,date,time,email,phone) values ('" +
-    p_name +
-    "','" +
-    department +
-    "','" +
-    d_name +
-    "','" +
-    date +
-    "','" +
-    time +
-    "','" +
-    email +
-    "','" +
-    phone +
-    "')";
-  con.query(query, callback);
-};
 
-module.exports.getallappointment = function (callback) {
+module.exports.getAllAppointment = function (callback) {
   var query = "select a.appointment_id, a.appointment_num, p.patient_id,  CONCAT(p.first_name, ' ', p.last_name) AS pname,d.doctor_id ,CONCAT(d.first_name, ' ', d.last_name) AS dname, a.appointment_date, s.start_time, s.end_time from appointment a join patient p on p.patient_id = a.patient_id join schedule s on s.schedule_id = a.schedule_id join doctor d on d.doctor_id = s.schedule_id";
   con.query(query, callback);
 };
@@ -429,48 +443,6 @@ module.exports.searchEmp = function (key, callback) {
   console.log(query);
 };
 
-module.exports.getappointmentbyid = function (id, callback) {
-  var query = "select * from appointment where id=" + id;
-  console.log(query);
-  con.query(query, callback);
-};
-
-module.exports.editappointment = function (
-  id,
-  p_name,
-  department,
-  d_name,
-  date,
-  time,
-  email,
-  phone,
-  callback
-) {
-  var query =
-    "update appointment set patient_name='" +
-    p_name +
-    "',department='" +
-    department +
-    "',doctor_name='" +
-    d_name +
-    "',date='" +
-    date +
-    "',time='" +
-    time +
-    "',email='" +
-    email +
-    "',phone='" +
-    phone +
-    "' where id=" +
-    id;
-  con.query(query, callback);
-};
-
-module.exports.deleteappointment = function (id, callback) {
-  var query = "delete from appointment where id=" + id;
-  con.query(query, callback);
-};
-//module.exports =router;
 
 module.exports.findOne = function (email, callback) {
   var query = "select *from users where email='" + email + "'";
