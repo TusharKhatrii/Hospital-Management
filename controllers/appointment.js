@@ -25,15 +25,54 @@ router.get('/',function(req,res){
                 appointment.appointment_date = ''; // Handle case where date is invalid
             }
         });
-        // console.log(result);
+        console.log(appointments);
         res.render('appointment.ejs',{list :appointments});
     })
     
 });
 
-router.get('/add_appointment',function(req,res){
-    res.render('add_appointment.ejs');
+// router.get('/add_appointment',function(req,res){
+//     res.render('add_appointment.ejs');
+// });
+// router.get('/add_appointment',function(req,res){
+//     db.getAllPatients_with_fullname(function(err,patients){
+//         if (err) {
+//             console.error("Error updating Patient details: ", err);
+//             return res.status(500).send("Server Error");
+//         }
+//     db.getAllDoctors_with_fullname(function(err,Doctors){
+//             if (err) {
+//                 console.error("Error updating Patient details: ", err);
+//                 return res.status(500).send("Server Error");
+//             }
+//         console.log(Doctors);
+//         res.render('add_appointment.ejs',{doctors :Doctors});
+//     })
+    
+// });
+router.get('/add_appointment', function (req, res) {
+    db.getAllPatients_with_fullname(function (err, patients) {
+        if (err) {
+            console.error("Error fetching patient details: ", err);
+            return res.status(500).send("Server Error");
+        }
+
+        // Fetch doctors after patients
+        db.getAllDoctors_with_schedule(function (err, doctors) {
+            if (err) {
+                console.error("Error fetching doctor details: ", err);
+                return res.status(500).send("Server Error");
+            }
+
+            // Pass both patients and doctors to the view
+            res.render('add_appointment.ejs', { 
+                patients: patients, 
+                doctors: doctors 
+            });
+        });
+    });
 });
+
 
 router.post('/add_appointment',function(req,res){
 

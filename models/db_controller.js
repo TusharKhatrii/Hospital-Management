@@ -104,6 +104,13 @@ module.exports.getAllDoctorsWithSpecialties = function (callback) {
   con.query(sql, callback);
 };
 
+module.exports.getAllDoctors_with_schedule = function (callback) {
+  const sql = `
+     SELECT *, CONCAT(D.first_name,D.last_name) AS dname FROM doctor D JOIN SCHEDULE S ON S.doctor_id = D.doctor_id
+  `;
+  con.query(sql, callback);
+};
+
 module.exports.getDoctorById = function (id, callback) {
   const sql = 'SELECT * FROM doctor WHERE doctor_id = ?';
   con.query(sql, [id], function (err, result) {
@@ -180,6 +187,15 @@ module.exports.deleteDoctor = function (id, callback) {
 
 module.exports.getAllPatients = function (callback) {
   var query = `SELECT * FROM PATIENT`;
+  con.query(query, function (err, res) {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, res);
+  })
+};
+module.exports.getAllPatients_with_fullname = function (callback) {
+  var query = `SELECT patient_id, CONCAT(first_name, ' ', last_name) AS pname FROM PATIENT`;
   con.query(query, function (err, res) {
     if (err) {
       return callback(err);
