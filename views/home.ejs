@@ -183,39 +183,35 @@
                     <div class="col-12 col-md-6 col-lg-8 col-xl-8">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title d-inline-block">Upcoming Appointments number <%= appointment%>
+                                <h4 class="card-title d-inline-block">Upcoming Appointments: <%= appointment%>
                                 </h4> <a href="/appointment" class="btn btn-primary float-right">View all</a>
                             </div>
                             <div class="card-body p-0">
                                 <div class="table-responsive">
                                     <table class="table mb-0">
-                                        <thead class="d-none">
+                                        <thead>
                                             <tr>
                                                 <th>Patient Name</th>
                                                 <th>Doctor Name</th>
                                                 <th>Timing</th>
-
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <% for (var i=0; i < applist.length; i++){ %>
                                                 <tr>
                                                     <td style="min-width: 200px;">
-                                                        <h5 class="time-title p-0">Patient Name</h5>
                                                         <p>
-                                                            <%= applist[i].patient_name%>
+                                                            <%= applist[i].pname%>
                                                         </p>
                                                     </td>
                                                     <td>
-                                                        <h5 class="time-title p-0">Appointment With</h5>
                                                         <p>
-                                                            <%= applist[i].doctor_name%>
+                                                            <%= applist[i].dname%>
                                                         </p>
                                                     </td>
                                                     <td>
-                                                        <h5 class="time-title p-0">Timing</h5>
                                                         <p>
-                                                            <%= applist[i].time%>
+                                                            <%= applist[i].start_time%> - <%= applist[i].end_time%>
                                                         </p>
                                                     </td>
                                                     <td class="text-right">
@@ -224,10 +220,6 @@
                                                     </td>
                                                     <% } %>
                                                 </tr>
-
-
-
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -262,10 +254,6 @@
                                             </div>
                                         </li>
                                         <% } %>
-
-
-
-
                                 </ul>
                             </div>
                             <div class="card-footer text-center bg-white">
@@ -278,61 +266,39 @@
                     <div class="col-12 col-md-6 col-lg-8 col-xl-8">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title d-inline-block">New Patients </h4> <a href="patients.html"
+                                <h4 class="card-title d-inline-block">Patients </h4> <a href="/home/patients"
                                     class="btn btn-primary float-right">View all</a>
                             </div>
                             <div class="card-block">
                                 <div class="table-responsive">
                                     <table class="table mb-0 new-patient-table">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                <td>Gender</td>
+                                                <td>Contact</td>
+                                            </tr>
+                                        </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>
-                                                    <img width="28" height="28" class="rounded-circle"
-                                                        src="/assets/img/user.jpg" alt="">
-                                                    <h2>John Doe</h2>
-                                                </td>
-                                                <td>Johndoe21@gmail.com</td>
-                                                <td>+1-202-555-0125</td>
-                                                <td><button
-                                                        class="btn btn-primary btn-primary-one float-right">Fever</button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <img width="28" height="28" class="rounded-circle"
-                                                        src="/assets/img/user.jpg" alt="">
-                                                    <h2>Richard</h2>
-                                                </td>
-                                                <td>Richard123@yahoo.com</td>
-                                                <td>202-555-0127</td>
-                                                <td><button
-                                                        class="btn btn-primary btn-primary-two float-right">Cancer</button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <img width="28" height="28" class="rounded-circle"
-                                                        src="/assets/img/user.jpg" alt="">
-                                                    <h2>Villiam</h2>
-                                                </td>
-                                                <td>Richard123@yahoo.com</td>
-                                                <td>+1-202-555-0106</td>
-                                                <td><button
-                                                        class="btn btn-primary btn-primary-three float-right">Eye</button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <img width="28" height="28" class="rounded-circle"
-                                                        src="/assets/img/user.jpg" alt="">
-                                                    <h2>Martin</h2>
-                                                </td>
-                                                <td>Richard123@yahoo.com</td>
-                                                <td>776-2323 89562015</td>
-                                                <td><button
-                                                        class="btn btn-primary btn-primary-four float-right">Fever</button>
-                                                </td>
-                                            </tr>
+                                            <% for (var i=0; i < tot_patient.length; i++){ %>
+                                                <tr>
+                                                    <td style="min-width: 200px;">
+                                                        <p>
+                                                            <%= tot_patient[i].first_name%> <%= tot_patient[i].last_name%> 
+                                                        </p>
+                                                    </td>
+                                                    <td>
+                                                        <p>
+                                                            <%= tot_patient[i].gender%>
+                                                        </p>
+                                                    </td>
+                                                    <td>
+                                                        <p>
+                                                            <%= tot_patient[i].contact%>
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                                <% } %>
                                         </tbody>
                                     </table>
                                 </div>

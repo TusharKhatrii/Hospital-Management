@@ -72,8 +72,11 @@
                         <li>
                             <a href="/Patients"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="/appointment"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+                        </li>
+                        <li class="active">
+                            <a href="/schedule"><i class="fa fa-calendar"></i> <span>schedule</span></a>
                         </li>
                         <li class="submenu">
                             <a href="#"><i class="fa fa-user"></i> <span> Employees </span> <span
@@ -105,86 +108,83 @@
         <div class="content">
             <div class="row">
                 <div class="col-lg-8 offset-lg-2">
-                    <h4 class="page-title">Delete Appointment</h4>
+                    <h4 class="page-title">Add Schedule</h4>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-8 offset-lg-2">
-                    <form method="POST">
-                        <div class="row">
-                            <label>Are you sure to Delete the Appointment?</label>
-                           <!--  <div class="col-md-6">
-                                <div class="form-group">
-                                    <% for (var i = 0; i < list.length; i++){ %>
-                                    <label>Patient Name </label>
-                                    <input class="form-control" type="text" name="p_name" value="<%= list[i].patient_name%>">
-                                </div>
-                            </div>
-                           
-                        </div>
-                        <div class="row">
+                    <form method="POST" action="/schedule/add_schedule">
+                        <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Department</label>
-                                    <select class="" name="department">
-                                        
-                                        <option value="Dentists">Dentists</option>
-                                        <option value="Neurology">Neurology</option>
-                                        <option value="Opthalmology">Opthalmology</option>
-                                        <option value="Orthopedics">Orthopedics</option>
-                                        <option value="Cancer Departmen">Cancer Department</option>
-                                        <option value="ENT Departmen">ENT Department</option>
+                                    <label>Schedule Title </label>
+                                    <input class="form-control" name="title" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="appointment_date">Start time</label>
+                                    <input type="time" class="form-control" id="start_time"
+                                        name="start_time" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="appointment_date">End time</label>
+                                    <input type="time" class="form-control" id="end_time"
+                                        name="end_time" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Number of Patients</label>
+                                    <input class="form-control" name="NOP" required>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Doctor Name</label>
-                                    <input type="text" name="d_name" id="" value="<%= list[i].doctor_name%>">
+                                    <select class="form-control" name="doctor_id" required>
+                                        <% for (var i=0; i < doctors.length; i++) { %>
+                                            <option value="<%= doctors[i].doctor_id %>">
+                                                <%= doctors[i].dname %>
+                                            </option>
+                                            <% } %>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Date</label>
-                                    <div class="cal-icon">
-                                        <input type="text" class="form-control datetimepicker" name="date" value="<%= list[i].date%>">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Time</label>
-                                    <div class="time-icon">
-                                        <input type="text" class="form-control" id="datetimepicker3" name="time" value="<%= list[i].time%>">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Patient Email</label>
-                                    <input class="form-control" type="email" name="email" value="<%= list[i].email%>">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Patient Phone Number</label>
-                                    <input class="form-control" type="text" name="phone" value="<%= list[i].phone%>">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <% } %> -->
-                        <div class="m-t-20 text-center">
-                            <button class="btn btn-primary submit-btn">Delete Appointment</button>
+                       
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary submit-btn">Create Appointment</button>
                         </div>
                     </form>
                 </div>
             </div>
+            </form>
         </div>
-    </body>
-    </html>
-        
+    </div>
+    </div>
+    </div>
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="/assets/js/jquery-3.2.1.min.js"></script>
+    <script src="/assets/js/popper.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/jquery.slimscroll.js"></script>
+    <script src="/assets/js/select2.min.js"></script>
+    <script src="/assets/js/moment.min.js"></script>
+    <script src="/assets/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/assets/js/app.js"></script>
+</body>
+
+
+<!-- add-appointment24:07-->
+
+</html>
