@@ -107,7 +107,6 @@ router.get('/delete_appointment/:id', function (req, res) {
     db.getappointmentbyid1(id, function (err, result) {
         res.render('delete_appointment.ejs', { list: result });
     })
-
 });
 
 router.post('/delete_appointment/:id', function (req, res) {
