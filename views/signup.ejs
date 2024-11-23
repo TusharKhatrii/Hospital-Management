@@ -20,6 +20,18 @@
         <div class="account-page">
             <div class="account-center">
                 <div class="account-box">
+                    <!-- Display success message -->
+                    <% if (successMessages.length> 0) { %>
+                        <div class="alert alert-success">
+                            <%= successMessages.join(', ') %>
+                    </div>
+                    <% } %>
+                    
+                    <% if (errorMessages.length > 0) { %>
+                        <div class="alert alert-danger">
+                            <%= errorMessages.join(' , ') %>
+                        </div>
+                    <% } %>
                     <form action="" method="post" class="form-signin">
                         <div class="account-logo">
                             <a href="index-2.html"><img src="assets/img/logo-dark.png" alt=""></a>
