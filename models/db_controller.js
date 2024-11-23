@@ -851,12 +851,10 @@ module.exports.getAllDoctorsWithSpecialties = function (callback) {
   con.query(sql, callback);
 };
 
-// module.exports.getAllDoctors_with_schedule = function (callback) {
-//   const sql = `
-//      SELECT *, CONCAT(D.first_name,D.last_name) AS dname FROM doctor D JOIN SCHEDULE S ON S.doctor_id = D.doctor_id
-//   `;
-//   con.query(sql, callback);
-// };
+module.exports.getAllDoctors = function (callback) {
+  const sql = `SELECT *, CONCAT(D.first_name,D.last_name) AS dname FROM doctor D`;
+  con.query(sql, callback);
+};
 
 module.exports.getDoctorById = function (id, callback) {
   const sql = 'SELECT * FROM doctor WHERE doctor_id = ?';
@@ -1053,15 +1051,63 @@ module.exports.addPatient = function (
 
 
 module.exports.getAllSchedule = function (callback) {
-  var query = `SELECT * FROM schedule`;
+  var query = `SELECT * , concat(first_name , ' ' , last_name) as dname FROM schedule s join doctor d on d.doctor_id = s.doctor_id`;
   con.query(query, function (err, results) {
     if (err) {
-      return callback(err);
+      console.log(err);
+      
     }
     callback(null, results);
   });
 };
+module.exports.getScheduleId = function (callback) {
+  var query = `SELECT MAX(Schedule_id) AS maxId FROM appointment`;
+  con.query(query, function (err, res) {
+    if (err) {
+      console.log("error in getting Schedule id");
+      return callback(err);
+    }
+    callback(null, res);
+  })
+};
 
+module.exports.addschedule = function (
+  schedule_id,
+  title,
+  start_time,
+  end_time,
+  NOP,
+  doctor_id,
+  callback
+) {
+  var query = `INSERT INTO schedule(schedule_id,title,start_time,end_time,NOP,doctor_id) VALUES (?,?,?,?,?,?)`;
+  con.query(
+    query,
+    [schedule_id, title, start_time, end_time, NOP, doctor_id],
+    function (err, results) {
+      if (err) {
+        console.error("Error during database insertion:", err);
+        return callback(err);
+      }
+      callback(null, results);
+    }
+  );
+};
+
+module.exports.getschedule = function (id, callback) {
+  var query = "select * from schedule where schedule_id =" + id;
+  console.log(query);
+  con.query(query, callback);
+};
+module.exports.deleteschedule = function (id, callback) {
+  var query = "delete from schedule where schedule_id =" + id;
+  con.query(query, callback);
+};
+module.exports.getschedulebyid1 = function (id, callback) {
+  var query = "select * from schedule where schedule_id =" + id;
+  console.log(query);
+  con.query(query, callback);
+};
 module.exports.getAppointmentId = function (callback) {
   var query = `SELECT MAX(appointment_id) AS maxId FROM appointment`;
   con.query(query, function (err, res) {
