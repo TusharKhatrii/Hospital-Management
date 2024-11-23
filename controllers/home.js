@@ -118,7 +118,18 @@ router.get('*', function(req, res, next){
 
 router.get('/',function(req,res){
     db.getAllDoctorsWithSpecialties(function(err,result){
-        db.getallappointment(function(err,result1){
+        db.getAllAppointment(function(err,result1){
+            if (err) {
+                // Handle the error appropriately
+                console.error("Error fetching appointments:", err);
+                return res.status(500).send("Internal Server Error");
+            }
+        
+            if (!result1) {
+                // If result1 is null or undefined
+                console.warn("No appointments found; setting default value.");
+                result1 = [];
+            }
         var total_doc = result.length ;
         var appointment = result1.length;
          
