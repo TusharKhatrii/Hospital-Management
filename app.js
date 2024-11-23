@@ -34,6 +34,7 @@ var landing = require ('./controllers/landing');
 var complain = require ('./controllers/complain');
 var inbox = require ('./controllers/inbox');
 var appointment = require ('./controllers/appointment');
+var schedule = require ('./controllers/schedule');
 var patient_controller = require ('./controllers/patient_controller');
 
 
@@ -85,4 +86,5 @@ app.use ('/',landing);
 app.use ('/complain',complain);
 app.use ('/inbox',inbox);
 app.use ('/appointment',appointment);
+app.use ('/schedule',schedule);
 app.use('/receipt',receipt);
