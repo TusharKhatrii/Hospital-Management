@@ -101,42 +101,39 @@
 // module.exports = router;
 
 
-var express = require ('express');
+var express = require('express');
 var router = express.Router();
-var db = require.main.require ('./models/db_controller');
-var bodyPaser = require ('body-parser');
+var db = require.main.require('./models/db_controller');
+var bodyPaser = require('body-parser');
 
 
-router.get('*', function(req, res, next){
-	// if(req.cookies['email'] == null){
-	// 	res.redirect('/login');
-	// }else{
-		next();
-	// }
+router.get('*', function (req, res, next) {
+    // if(req.cookies['email'] == null){
+    // 	res.redirect('/login');
+    // }else{
+    next();
+    // }
 });
 
 
-router.get('/',function(req,res){
-    db.getAllDoctorsWithSpecialties(function(err,result){
-        db.getAllAppointment(function(err,result1){
-            if (err) {
-                // Handle the error appropriately
-                console.error("Error fetching appointments:", err);
-                return res.status(500).send("Internal Server Error");
-            }
-        
-            if (!result1) {
-                // If result1 is null or undefined
-                console.warn("No appointments found; setting default value.");
-                result1 = [];
-            }
-        var total_doc = result.length ;
-        var appointment = result1.length;
-         
-        res.render('home.ejs',{doc : total_doc , doclist : result, appointment : appointment, applist : result1});
+router.get('/', function (req, res) {
+    db.getAllDoctorsWithSpecialties(function (err, result) {
+        db.getAllPatients(function (err, patient) {
+            db.getAllAppointment(function (err, result1) {
+                if (err) {
+                    console.error("Error fetching appointments:", err);
+                    return res.status(500).send("Internal Server Error");
+                }
+
+                var total_doc = result.length;
+                var appointment = result1.length;
+                var patients = patient.length;
+                res.render('home.ejs', { doc: total_doc, doclist: result, appointment: appointment, applist: result1,patients:patients,tot_patient:patient});
+            });
+
         });
     });
-   
+
 });
 
 router.get('/doctors', (req, res) => {
@@ -195,11 +192,10 @@ router.post('/edit_doctor/:id', function (req, res) {
 });
 
 router.get('/patients', (req, res) => {
-    db.getAllPatients(function(err,patients){
-        if(err)
-        {
+    db.getAllPatients(function (err, patients) {
+        if (err) {
             console.error("Error updating doctor details: ", err);
-            return res.status(500).send("Server Error");   
+            return res.status(500).send("Server Error");
         }
         patients.forEach(patient => {
             const date = new Date(patient.date_of_birth);
@@ -214,30 +210,30 @@ router.get('/patients', (req, res) => {
 });
 
 
-router.get('/profile',function(req,res){
+router.get('/profile', function (req, res) {
     var username = req.cookies['username'];
-    db.getuserdetails(username,function(err,result){
+    db.getuserdetails(username, function (err, result) {
         //console.log(result);
-        res.render('profile.ejs',{list:result});
+        res.render('profile.ejs', { list: result });
     });
 });
 
-router.post('/profile',function(req,res){
+router.post('/profile', function (req, res) {
     var username = req.cookies['username'];
-    db.getuserdetails(username,function(err,result){
+    db.getuserdetails(username, function (err, result) {
         var id = result[0].id;
         var password = result[0].password;
-        var username = result[0].username; 
-        if (password== req.body.password){
+        var username = result[0].username;
+        if (password == req.body.password) {
 
-            db.edit_profile(id,req.body.username,req.body.email,req.body.new_password,function(err,result1){
-                if (result1){
+            db.edit_profile(id, req.body.username, req.body.email, req.body.new_password, function (err, result1) {
+                if (result1) {
                     res.send("profile edited successfully");
                 }
-                if(!result1){ res.send("old password did not match");}
+                if (!result1) { res.send("old password did not match"); }
             });
         }
-    }) ;
+    });
 });
 
-module.exports =router;
+module.exports = router;
