@@ -72,10 +72,10 @@
                         <li>
                             <a href="/Patients"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="/appointment"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
                         </li>
-                        <li>
+                        <li class="active">
                             <a href="/schedule"><i class="fa fa-calendar"></i> <span>schedule</span></a>
                         </li>
                         <li class="submenu">
@@ -104,19 +104,20 @@
             </div>
         </div>
     </div>
+    
         <div class="page-wrapper">
             <div class="content">
                 <div class="row">
                     <div class="col-sm-4 col-3">
-                        <h4 class="page-title">Appointments</h4>
+                        <h4 class="page-title">Schedules</h4>
                     </div>
                     <div class="col-sm-8 col-9 text-right m-b-20">
-                        <a href="/appointment/add_appointment" class="btn btn btn-primary btn-rounded float-right"><i
-                                class="fa fa-plus"></i> Add Appointment</a>
+                        <a href="/schedule/add_schedule" class="btn btn btn-primary btn-rounded float-right"><i
+                                class="fa fa-plus"></i> Add Schedule</a>
                     </div>
                 </div>
                 <div class="row">
-                    <!-- Display success message -->
+                   
                     <% if (successMessages.length > 0) { %>
                         <div class="alert alert-success">
                             <%= successMessages.join(', ') %>
@@ -133,13 +134,11 @@
                             <table class="table table-striped custom-table">
                                 <thead>
                                     <tr>
-                                        <th>Appointment ID</th>
-                                        <th>Appointment Num</th>
-                                        <th>Patient ID</th>
-                                        <th>Patient Name</th>
+                                        <th>Schdeule ID</th>
+                                        <th>Schdeule Title</th>
+                                        <th>Number of Patients</th>
                                         <th>Doctor ID</th>
                                         <th>Doctor Name</th>
-                                        <th>Appointment Date</th>
                                         <th>Start Time</th>
                                         <th>End Time</th>
                                         <th class="text-right">Action</th>
@@ -149,25 +148,19 @@
                                     <% for (var i=0; i < list.length; i++){ %>
                                         <tr>
                                             <td>
-                                                <%= list[i].appointment_id %>
+                                                <%= list[i].Schedule_id %>
                                             </td>
                                             <td>
-                                                <%= list[i].appointment_num %>
+                                                <%= list[i].title%>
                                             </td>
                                             <td>
-                                                <%= list[i].patient_id %>
-                                            </td>
-                                            <td>
-                                                <%= list[i].pname %>
+                                                <%= list[i].NOP %>
                                             </td>
                                             <td>
                                                 <%= list[i].doctor_id %>
                                             </td>
                                             <td>
                                                 <%= list[i].dname %>
-                                            </td>
-                                            <td>
-                                                <%= list[i].appointment_date %>
                                             </td>
                                             <td>
                                                 <%= list[i].start_time %>
@@ -183,10 +176,10 @@
                                                             class="fa fa-ellipsis-v"></i></a>
                                                     <div class="dropdown-menu dropdown-menu-right">
                                                         <a class="dropdown-item"
-                                                            href="/appointment/edit_appointment/<%= list[i].appointment_id %>"><i
+                                                            href="/schedule/edit_schedule/<%= list[i].Schedule_id %>"><i
                                                                 class="fa fa-pencil m-r-5"></i> Edit</a>
                                                         <a class="dropdown-item"
-                                                            href="/appointment/delete_appointment/<%= list[i].appointment_id %>"><i
+                                                            href="/schedule/delete_schedule/<%= list[i].Schedule_id %>"><i
                                                                 class="fa fa-trash-o m-r-5"></i> Delete</a>
                                                     </div>
                                                 </div>
@@ -199,6 +192,7 @@
                     </div>
                 </div>
             </div>
+            
             <div id="delete_appointment" class="modal fade delete-modal" role="dialog">
                 <% for (var i=0; i < list.length; i++){ %>
                     <form action="/appointment/delete_appointment/<%=list[i].id%>" method="POST">
@@ -218,6 +212,7 @@
                     </form>
             </div>
         </div>
+       
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
     <script src="assets/js/jquery-3.2.1.min.js"></script>
