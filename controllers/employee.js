@@ -4,24 +4,26 @@ var bodyParser = require('body-parser');
 var db = require.main.require ('./models/db_controller');
 const { check, validationResult } = require('express-validator');
 
-module.exports = router;
 
-
+router.use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.json());
 
 router.get('*', function(req, res, next){
-	if(req.cookies['username'] == null){
-		res.redirect('/login');
-	}else{
-		next();
-	}
+    // if(req.cookies['email'] == null){
+		// res.redirect('/login');
+	// }else{
+        next();
+	// }
 });
 
-router.get('/',function(req,res){
-    db.getAllemployee(function(err,result){
-        res.render('employee.ejs',{employee : result});
-
+router.get('/', function(req, res) {
+    db.getAllRoles(function(err, result) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Server Error'); // Sends a server error response
+        }
+        res.render('roles.ejs', { employee: result }); // Render the roles.ejs template with data
     });
-   
 });
 
 router.get('/add',function(req,res){
@@ -40,13 +42,12 @@ router.post('/add',function(req,res){
         console.log('employee inserted!!');
         res.redirect('/employee');
     });
-
+    
 });
 
 
 router.get('/leave',function(req,res){
     db.getAllLeave(function(err,result){
-       
         res.render('leave.ejs',{user : result});
     });
 });
@@ -143,14 +144,15 @@ router.post('/add_leave',[
     check('to').notEmpty().withMessage('select a date'),
     check('reason').notEmpty().withMessage('Specify Reason')
 ],function(req,res){
-
+    
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
-      }
-
+    }
+    
     db.add_leave(req.body.name,req.body.id,req.body.leave_type,req.body.from,req.body.to,req.body.reason,function(err,result){
         res.redirect('/employee/leave');
     });
 });
+module.exports = router;

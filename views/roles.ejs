@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/img/favicon.ico">
+    <title>Preclinic - Medical & Hospital - Bootstrap 4 Admin Template</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+    <!--[if lt IE 9]>
+        <script src="/assets/js/html5shiv.min.js"></script>
+        <script src="/assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="header">
+            <div class="header-left">
+                <a href="/home" class="logo">
+                    <img src="/assets/img/logo.png" width="35" height="35" alt=""> <span>Preclinic</span>
+                </a>
+            </div>
+            <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <span class="user-img">
+                            <img class="rounded-circle" src="/assets/img/user.jpg" width="24" alt="Admin">
+                            <span class="status online"></span>
+                        </span>
+                        <span>Admin</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/home/profile">My Profile</a>
+                        <a class="dropdown-item" href="/home/edit-profile">Edit Profile</a>
+                        <a class="dropdown-item" href="/logout">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">Main</li>
+                        <li><a href="/home"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+                        <li><a href="/doctors"><i class="fa fa-user-md"></i> <span>Doctors</span></a></li>
+                        <li><a href="/patients"><i class="fa fa-wheelchair"></i> <span>Patients</span></a></li>
+                        <li><a href="/appointment"><i class="fa fa-calendar"></i> <span>Appointments</span></a></li>
+                        <li><a href="/employee"><i class="fa fa-list"></i> <span>Employees List</span></a></li>
+                        <li class="active"><a href="/roles"><i class="fa fa-cogs"></i> <span>Roles</span></a></li>
+                        <li><a href="/store"><i class="fa fa-cube"></i> <span>Medicine Store</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="page-wrapper">
+
+        <div class="content">
+            <div class="row">
+                <div class="col-sm-4 col-3">
+                    <h4 class="page-title">Roles</h4>
+                </div>
+                <div class="col-sm-8 col-9 text-right m-b-20">
+                <button class="btn btn-primary btn-rounded float-right" data-toggle="modal" data-target="#addRoleModal">
+                    <i class="fa fa-plus"></i> Add Role
+                </button>
+                </div>
+                <!-- <div class="col-sm-8 col-9 text-right m-b-20">
+                    <a href="/roles/add_role" class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i>
+                        Add Roles</a>
+                </div> -->
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <% if (successMessages.length> 0) { %>
+                            <div class="alert alert-success">
+                                <%= successMessages.join(', ') %>
+                            </div>
+                        <% } %>
+                        <% if (errorMessages.length > 0) { %>
+                            <div class="alert alert-danger">
+                                <%= errorMessages.join(' , ') %>
+                            </div>
+                        <% } %>
+
+                        <table class="table table-striped table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 20%">ID</th>
+                                    <th class="text-center" style="width: 50%">Role Name</th>
+                                    <th class="text-center" style="width: 30%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for (var i = 0; i < list.length; i++) { %>
+                                    <tr>
+                                        <td class="text-center align-middle"><%= list[i].role_id %></td>
+                                        <td class="text-center align-middle">
+                                            <form action="/roles/edit_role/<%= list[i].role_id %>" method="POST" class="form-inline">
+                                                <input type="text" class="form-control mr-2" name="role_name" value="<%= list[i].role_name %>" required>
+                                                <button type="submit" class="btn btn-success">Update</button>
+                                            </form>
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <a href="/roles/delete_role/<%= list[i].role_id %>" class="btn btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal for Adding a New Role -->
+            <div class="modal fade" id="addRoleModal" tabindex="-1" role="dialog" aria-labelledby="addRoleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form action="/roles/add_role" method="POST">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addRoleModalLabel">Add New Role</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="role_name">Role Name</label>
+                                    <input type="text" class="form-control" id="role_name" name="role_name" required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Add Role</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+
+    <div class="sidebar-overlay" data-reff=""></div>
+
+    <script src="/assets/js/jquery-3.2.1.min.js"></script>
+    <script src="/assets/js/popper.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/jquery.slimscroll.js"></script>
+    <script src="/assets/js/select2.min.js"></script>
+    <script src="/assets/js/moment.min.js"></script>
+    <script src="/assets/js/app.js"></script>
+</body>
+
+</html>

@@ -56,7 +56,8 @@ router.post('/add_schedule', function (req, res) {
         }
 
         const newScheduleID = result[0].maxId ? result[0].maxId + 1 : 1;
-        db.addschedule(newScheduleID, title, start_time, end_time, NOP, doctor_id, function (err, result) {
+        console.log(newScheduleID);
+        db.addschedule(newScheduleID, title, start_time, end_time, NOP, doctor_id, function (err, schedule) {
             if (err) {
                 console.error("Error adding Schedule:", err);
                 return res.status(400).send('Error adding Schedule.');
