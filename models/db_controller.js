@@ -8,7 +8,7 @@ var con = mysql.createConnection({
   user: "root",
   password: "",
   database: "hms",
-  port: 3307
+  // port: 3307
 });
 
 // Connect to MySQL and run a test query
@@ -377,7 +377,16 @@ module.exports.getappointmentbyid1 = function (id, callback) {
   console.log(query);
   con.query(query, callback);
 };
-
+module.exports.getappointmentbyid2 = function (id, callback) {
+  var query = `SELECT * FROM appointment WHERE appointment_id = ?`;
+  con.query(query, [id], function (err, result) {
+    if (err) {
+      console.error('Error executing query:', err);
+      return callback(err, null);
+    }
+    callback(null, result);
+  });
+}
 module.exports.deleteappointment = function (id, callback) {
   var query = "delete from appointment where appointment_id=" + id;
   con.query(query, callback);

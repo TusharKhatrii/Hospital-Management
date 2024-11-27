@@ -90,9 +90,36 @@ router.post('/add_appointment', function (req, res) {
 
 router.get('/edit_appointment/:id', function (req, res) {
     var id = req.params.id;
-    db.getappointmentbyid1(id, function (err, result) {
-        res.render('edit_appointment.ejs', { list: result });
+    
+    db.getappointmentbyid2(id, function (err, appointment) {
+        if (err) {
+            console.error("Error fetching appointment details: ", err);
+            return res.status(500).send("Server Error");
+        }
+        console.log(appointment);
+    db.getAllPatients_with_fullname(function (err, patients) {
+        if (err) {
+            console.error("Error fetching patient details: ", err);
+            return res.status(500).send("Server Error");
+        }
+
+        // Fetch doctors after patients
+        db.getAllSchedule(function (err, schedule) {
+            if (err) {
+                console.error("Error fetching schedule details: ", err);
+                return res.status(500).send("Server Error");
+            }
+
+            // Pass both patients and doctors to the view
+            res.render('edit_appointment.ejs', {
+                patients: patients,
+                list: schedule,
+                appointment: appointment
+            });
+        });
+        });
     });
+    //  res.render('edit_appointment.ejs');
 });
 
 router.post('/edit_appointment/:id', function (req, res) {
