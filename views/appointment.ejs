@@ -78,23 +78,11 @@
                         <li>
                             <a href="/schedule"><i class="fa fa-calendar"></i> <span>schedule</span></a>
                         </li>
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-user"></i> <span> Employees </span> <span
-                                    class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="/employee">Employees List</a></li>
-                                <li><a href="/employee/leave">Leaves</a></li>
-
-                            </ul>
+                        <li>
+                            <a href="/employee"><i class="fa fa-list"></i> <span>Employees List</span></a>
                         </li>
-
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-book"></i> <span> Payroll </span> <span
-                                    class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="/receipt"> Employee Salary </a></li>
-
-                            </ul>
+                        <li>
+                            <a href="/roles"><i class="fa fa-cogs"></i> <span>Roles</span></a>
                         </li>
                         <li>
                             <a href="/store"><i class="fa fa-cube"></i> <span>Medicine Store</span></a>
@@ -104,28 +92,28 @@
             </div>
         </div>
     </div>
-        <div class="page-wrapper">
-            <div class="content">
-                <div class="row">
-                    <div class="col-sm-4 col-3">
-                        <h4 class="page-title">Appointments</h4>
-                    </div>
-                    <div class="col-sm-8 col-9 text-right m-b-20">
-                        <a href="/appointment/add_appointment" class="btn btn btn-primary btn-rounded float-right"><i
-                                class="fa fa-plus"></i> Add Appointment</a>
-                    </div>
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="row">
+                <div class="col-sm-4 col-3">
+                    <h4 class="page-title">Appointments</h4>
                 </div>
-                <div class="row">
-                    <!-- Display success message -->
-                    <% if (successMessages.length > 0) { %>
-                        <div class="alert alert-success">
-                            <%= successMessages.join(', ') %>
+                <div class="col-sm-8 col-9 text-right m-b-20">
+                    <a href="/appointment/add_appointment" class="btn btn btn-primary btn-rounded float-right"><i
+                            class="fa fa-plus"></i> Add Appointment</a>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Display success message -->
+                <% if (successMessages.length> 0) { %>
+                    <div class="alert alert-success">
+                        <%= successMessages.join(', ') %>
                         </div>
                     <% } %>
                     
                     <% if (errorMessages.length > 0) { %>
                         <div class="alert alert-danger">
-                            <%= errorMessages.join(', ') %>
+                            <%= errorMessages.join(' , ') %>
                         </div>
                     <% } %>
                     <div class="col-md-12">
