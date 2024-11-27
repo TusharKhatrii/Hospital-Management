@@ -55,7 +55,7 @@ router.get('/delete_role/:id', function (req, res) {
         req.flash('success', 'Role Deleted Successfully');
         res.redirect('/roles'); // Redirect to roles page after deleting
     });
-});
+}); 
 
 // Route to add a new role
 router.post('/add_role', function (req, res) {
