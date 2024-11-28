@@ -1,158 +1,91 @@
 var express = require('express');
 var router = express.Router();
 var bodyParser = require('body-parser');
-var db = require.main.require ('./models/db_controller');
+var db = require.main.require('./models/db_controller');
 const { check, validationResult } = require('express-validator');
 
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
-router.get('*', function(req, res, next){
+router.get('*', function (req, res, next) {
     // if(req.cookies['email'] == null){
-		// res.redirect('/login');
-	// }else{
-        next();
-	// }
+    // res.redirect('/login');
+    // }else{
+    next();
+    // }
 });
 
-router.get('/', function(req, res) {
-    db.getAllRoles(function(err, result) {
+router.get('/', function (req, res) {
+    db.getAllEmployees(function (err, result) {
         if (err) {
             console.error(err);
             return res.status(500).send('Server Error'); // Sends a server error response
         }
-        res.render('roles.ejs', { employee: result }); // Render the roles.ejs template with data
+        result.forEach(doctor => {
+            const date = new Date(doctor.date_of_birth);
+            if (!isNaN(date.getTime())) { // Check if the date is valid
+                doctor.date_of_birth = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+            } else {
+                doctor.date_of_birth = ''; // Handle case where date is invalid
+            }
+        });
+        res.render('employee.ejs', { list: result }); // Render the Employee.ejs template with data
     });
 });
 
-router.get('/add',function(req,res){
-    res.render('add_employee.ejs');
-});
-
-router.post('/add',function(req,res){
-    var name = req.body.name;
-    var email = req.body.email;
-    var contact = req.body.contact;
-    var join_date = req.body.date;
-    var role = req.body.role;
-    var salary = req.body.salary;
-
-    db.add_employee(name,email,contact,join_date,role,salary,function(err,result){
-        console.log('employee inserted!!');
-        res.redirect('/employee');
-    });
-    
-});
-
-
-router.get('/leave',function(req,res){
-    db.getAllLeave(function(err,result){
-        res.render('leave.ejs',{user : result});
+router.get('/add_employee', function (req, res) {
+    db.getAllEmployees(function (err, result) {
+        if (err) {
+            console.error(err);
+            return callback(err);
+        }
+        res.render('add_employee.ejs', { list: result });
     });
 });
 
-router.get('/add_leave',function(req,res){
-    res.render('add_leave.ejs');
-    
-});
+router.post('/add_employee', function (req, res) {
+    const { 
+        first_name, 
+        last_name, 
+        email, 
+        password, 
+        date_of_birth, 
+        address, 
+        cnic, 
+        contact, 
+        gender, 
+        role_id
+    } = req.body; // Destructure req.body
 
-router.get('/edit_leave/:id',function(req,res){
-
-    var id = req.params.id;
-    db.getleavebyid(id,function(err,result){
-        res.render('edit_leave.ejs',{user:result});
-    });
-});
-
-router.post('/edit_leave/:id',function(req,res){
-    var id = req.params.id;
-    db.edit_leave(id,req.body.name,req.body.leave_type,req.body.from,req.body.to,req.body.reason,function(err,result){
-        res.redirect('/employee/leave');
-    });
-});
-
-router.get('/delete_leave/:id',function(req,res){
-    var id = req.params.id;
-    db.getleavebyid(id,function(err,result){
-
-        res.render('delete_leave.ejs' ,{user : result});
-    });
-});
-
-router.post('/delete_leave/:id',function(req,res){
-    var id = req.params.id;
-    
-    db.deleteleave(id,function(err,result){
-        res.redirect('/employee/leave');
-    });
-
-});
-
-
-
-router.get('/edit_employee/:id',function(req,res){
-    var id = req.params.id;
-    db.getEmpbyId(id,function(err,result){
-
-        res.render('edit_employee.ejs' ,{list : result});
-    });
-});
-
-
-
-router.post('/edit_employee/:id',function(req,res){
-    var id = req.params.id;
-    db.editEmp(id,req.body.name,req.body.email,req.body.contact,req.body.date,req.body.role,function(err,result){
-        res.redirect('/employee');
-    });
-
-});
-
-router.get('/delete_employee/:id',function(req,res){
-    var id = req.params.id;
-    db.getEmpbyId(id,function(err,result){
-
-        res.render('delete_employee.ejs' ,{list : result});
-    });
-});
-
-router.post('/delete_employee/:id',function(req,res){
-    var id = req.params.id;
-    
-    db.deleteEmp(id,function(err,result){
-        res.redirect('/employee');
-    });
-
-});
-
-router.post('/search',function(req,res){
-    var key = req.body.search;
-    db.searchEmp(key,function(err,result){
-        console.log(result);
-        
-        res.render('employee.ejs',{employee : result});
-    });
-});
-
-
-router.post('/add_leave',[
-    check('name').notEmpty(),
-    check('id').notEmpty(),
-    check('leave_type').notEmpty(),
-    check('from').notEmpty().withMessage('select a date'),
-    check('to').notEmpty().withMessage('select a date'),
-    check('reason').notEmpty().withMessage('Specify Reason')
-],function(req,res){
-    
-    
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
+    // Use your db method for adding a doctor
+    if (!first_name || !last_name || !email || !password || !contact || !cnic) {
+        return res.status(400).send("Please fill all required fields.");
     }
-    
-    db.add_leave(req.body.name,req.body.id,req.body.leave_type,req.body.from,req.body.to,req.body.reason,function(err,result){
-        res.redirect('/employee/leave');
+
+    // Step 1: Fetch the last employee_id
+    db.getEmployeeId(function(err, result) {
+        if (err) {
+            console.error('Error fetching max employee_id:', err);
+            return res.status(500).send('Error fetching last employee ID.');
+        }
+
+        // Step 2: Calculate new employee_id
+        const newEmployeeId = result[0].maxId ? result[0].maxId + 1 : 1; // Start at 1 if no records exist
+
+        // Step 3: Insert the new Employee record with the calculated employee_id
+        db.addEmployee(newEmployeeId, first_name, last_name, email, password, date_of_birth, address, cnic, contact, gender, role_id, function (err, result) {
+            if (err) {
+                console.error("Error adding employee:", err);
+                return res.status(500).send('Error adding employee.');
+            }
+        console.log('1 employee inserted');
+
+        // Redirect to the employee list or a success page
+        req.flash('success', 'Employee added successfully with ID: ',newEmployeeId);
+        res.redirect('/employee'); // Change this to your intended after-insertion page
     });
 });
+});
+
 module.exports = router;

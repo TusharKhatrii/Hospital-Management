@@ -8,7 +8,7 @@ var con = mysql.createConnection({
   user: "root",
   password: "",
   database: "hms",
-  // port: 3307
+  port: 3307
 });
 
 // Connect to MySQL and run a test query
@@ -474,8 +474,8 @@ module.exports.deleteRole = function (role_id, callback) {
       return callback(err);
     }
     callback(null, res);
-  })
-}
+  });
+};
 
 module.exports.addRole = function (role_id, role_name, callback) {
   var query = `INSERT INTO ROLES(role_id,role_name) VALUES(?,?)`;
@@ -485,8 +485,65 @@ module.exports.addRole = function (role_id, role_name, callback) {
       return callback(err);
     }
     callback(null, res);
-  })
-}
+  });
+};
+
+module.exports.getAllEmployees = function (callback)
+{
+  var query = `SELECT E.*,R.ROLE_NAME AS 'role_name' FROM EMPLOYEE E LEFT JOIN ROLES R ON R.ROLE_ID = E.ROLE_ID `;
+  con.query(query,function(err,res){
+    if (err) {
+      console.error("Error Fetching Employees:", err)
+      return callback(err);
+    }
+    callback(null, res);
+  });
+};
+
+module.exports.getEmployeeId = function (callback)
+{
+  var query = `SELECT MAX(employee_id) AS maxId FROM EMPLOYEE`;
+  con.query(query,function(err,res){
+    if(err)
+    {
+      console.error(err);
+      return callback(err);
+    }
+    callback(null,res);
+  });
+};
+
+module.exports.addEmployee = function (
+  employee_id,
+  first_name,
+  last_name,
+  email,
+  password,
+  date_of_birth,
+  address,
+  cnic,
+  contact,
+  gender,
+  role_id,  
+  callback
+) {
+  // SQL query for inserting new employee data
+  var query = "INSERT INTO `Employee` (`employee_id`,`first_name`, `last_name`, `email`, `password`, `date_of_birth`, `address`, `cnic`, `contact`, `gender`, `role_id`) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  // Execute the query with the provided values
+  con.query(
+    query,
+    [employee_id, first_name, last_name, email, password, date_of_birth, address, cnic, contact, gender, role_id],
+    function (err, results) {
+      if (err) {
+        console.error("Error during database insertion:", err); // Log any error
+        return callback(err); // Pass the error to the callback
+      }
+
+      // If the insertion is successful, return the results
+      callback(null, results);
+    }
+  );
+};
 
 module.exports.searchDoc = function (key, callback) {
   var query = 'SELECT  *from doctor where first_name like "%' + key + '%"';
