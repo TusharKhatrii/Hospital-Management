@@ -154,11 +154,7 @@ router.post('/update_doctor/:id', upload.single("image"), (req, res) => {
         phone,
         specialist_id // Ensure this is included
     } = req.body;
-
-
-    // Check if an image was uploaded
-
-    // Check if an image was uploaded
+    
     const image = req.file ? req.file.buffer : null;
 
     db.updateDoctor(id, first_name, last_name, email, date_of_birth, gender, address, phone, image, specialist_id, (err, result) => {

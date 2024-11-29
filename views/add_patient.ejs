@@ -118,7 +118,7 @@
                 <% } %>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form method="POST" action="/patients/add_patient">
+                        <form method="POST" action="/patients/add_patient" onsubmit="return validateForm();">
                              <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -195,6 +195,7 @@
         </div>
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
+    <script src="/js/formValidation.js"></script>
     <script src="/assets/js/jquery-3.2.1.min.js"></script>
 	<script src="/assets/js/popper.min.js"></script>
     <script src="/assets/js/bootstrap.min.js"></script>

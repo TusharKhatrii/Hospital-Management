@@ -67,7 +67,7 @@ app.use(bodyParser.json());
 app.use(cookie());
 //app.use(expressValidator());
 
-
+app.use(express.static(path.join(__dirname, 'public')));
 var server = app.listen(3000, function () {
 
     console.log('server started');

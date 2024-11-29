@@ -45,7 +45,6 @@ router.get('/edit_patient/:id', (req, res) => {
             console.error("Error fetching patient details:", err);
             return res.status(500).send("Error fetching patient details.");
         }
-
         res.render('edit_patient.ejs', { patient: patient[0] });
     });
 });
@@ -68,7 +67,7 @@ router.post('/update_patient/:id', (req, res) => {
             console.error("Error during update:", err);
             return res.render('edit_patient.ejs', {
                 message: 'Update failed. Please try again.',
-                patient: req.body, // Send the form data back for the user to see
+                patient: req.body, // Send form data back for the user to see
                 error: true,
             });
         }
@@ -81,11 +80,8 @@ router.post('/update_patient/:id', (req, res) => {
             }
 
             if (updatedPatient.length > 0) {
-                return res.render('edit_patient.ejs', {
-                    message: 'Patient updated successfully!',
-                    patient: updatedPatient[0],
-                    error: false,
-                });
+                req.flash('success','Patient updated successfully!');
+                res.redirect('/patients');
             } else {
                 return res.status(404).send("Patient not found.");
             }

@@ -260,7 +260,6 @@ module.exports.deletePatient = function (id, callback) {
   });
 };
 
-//getPaitentID and addPatinet...
 module.exports.getPatientId = function (callback) {
   var query = `SELECT MAX(patient_id) AS maxId FROM patient`;
   con.query(query, function (err, res) {
@@ -544,6 +543,65 @@ module.exports.addEmployee = function (
     }
   );
 };
+
+module.exports.getEmployeeById = function (id,callback)
+{
+  var query = `SELECT E.*,R.ROLE_NAME AS 'role_name'  FROM EMPLOYEE E LEFT JOIN ROLES R ON R.ROLE_ID = E.ROLE_ID WHERE E.EMPLOYEE_ID = ?`;
+  con.query(query,id,function(err,res){
+    if(err)
+    {
+      console.error(err);
+      return callback(err);
+    }
+    callback(null,res);
+  });
+};
+
+module.exports.editEmployee = function (
+  employee_id,
+  first_name,
+  last_name,
+  email,
+  date_of_birth,
+  address,
+  phone,
+  gender,
+  callback
+) {
+  var query = `UPDATE employee SET 
+    first_name = ?, 
+    last_name = ?, 
+    email = ?, 
+    date_of_birth = ?, 
+    address = ?, 
+    contact = ?,
+    gender = ?
+    WHERE employee_id = ?`;
+
+  con.query(
+    query,
+    [first_name, last_name, email, date_of_birth, address, gender,phone, employee_id],
+    function (err, results) {
+      if (err) {
+        console.error("Error updating employee:", err);
+        return callback(err);
+      }
+      callback(null, results);
+    }
+  );
+};
+
+module.exports.deleteEmployee = function (emp_id, callback) {
+  var query = `DELETE FROM EMPLOYEE WHERE EMPLOYEE_ID = ?`;
+  con.query(query, emp_id, function (err, res) {
+    if (err) {
+      console.error("Error deleting Employee:", err)
+      return callback(err);
+    }
+    callback(null, res);
+  });
+};
+
 
 module.exports.searchDoc = function (key, callback) {
   var query = 'SELECT  *from doctor where first_name like "%' + key + '%"';

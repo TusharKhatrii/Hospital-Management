@@ -3,6 +3,7 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 var db = require.main.require('./models/db_controller');
 const { check, validationResult } = require('express-validator');
+const { callbackPromise } = require('nodemailer/lib/shared');
 
 
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -20,17 +21,17 @@ router.get('/', function (req, res) {
     db.getAllEmployees(function (err, result) {
         if (err) {
             console.error(err);
-            return res.status(500).send('Server Error'); // Sends a server error response
+            return res.status(500).send('Server Error'); 
         }
         result.forEach(doctor => {
             const date = new Date(doctor.date_of_birth);
-            if (!isNaN(date.getTime())) { // Check if the date is valid
+            if (!isNaN(date.getTime())) { 
                 doctor.date_of_birth = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
             } else {
-                doctor.date_of_birth = ''; // Handle case where date is invalid
+                doctor.date_of_birth = ''; 
             }
         });
-        res.render('employee.ejs', { list: result }); // Render the Employee.ejs template with data
+        res.render('employee.ejs', { list: result }); 
     });
 });
 
@@ -45,47 +46,86 @@ router.get('/add_employee', function (req, res) {
 });
 
 router.post('/add_employee', function (req, res) {
-    const { 
-        first_name, 
-        last_name, 
-        email, 
-        password, 
-        date_of_birth, 
-        address, 
-        cnic, 
-        contact, 
-        gender, 
+    const {
+        first_name,
+        last_name,
+        email,
+        password,
+        date_of_birth,
+        address,
+        cnic,
+        contact,
+        gender,
         role_id
-    } = req.body; // Destructure req.body
+    } = req.body; 
 
-    // Use your db method for adding a doctor
     if (!first_name || !last_name || !email || !password || !contact || !cnic) {
         return res.status(400).send("Please fill all required fields.");
     }
 
-    // Step 1: Fetch the last employee_id
-    db.getEmployeeId(function(err, result) {
+    db.getEmployeeId(function (err, result) {
         if (err) {
             console.error('Error fetching max employee_id:', err);
             return res.status(500).send('Error fetching last employee ID.');
         }
 
-        // Step 2: Calculate new employee_id
         const newEmployeeId = result[0].maxId ? result[0].maxId + 1 : 1; // Start at 1 if no records exist
 
-        // Step 3: Insert the new Employee record with the calculated employee_id
         db.addEmployee(newEmployeeId, first_name, last_name, email, password, date_of_birth, address, cnic, contact, gender, role_id, function (err, result) {
             if (err) {
                 console.error("Error adding employee:", err);
                 return res.status(500).send('Error adding employee.');
             }
-        console.log('1 employee inserted');
 
-        // Redirect to the employee list or a success page
-        req.flash('success', 'Employee added successfully with ID: ',newEmployeeId);
-        res.redirect('/employee'); // Change this to your intended after-insertion page
+            // Redirect to the employee list or a success page
+            req.flash('success', 'Employee added successfully with ID: ', newEmployeeId);
+            res.redirect('/employee'); 
+        });
     });
 });
+
+router.get('/edit_employee/:id', function (req, res) {
+    id = req.params.id;
+    db.getEmployeeById(id, function (err, emp) {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Error updating employee');
+        }
+        if (emp.length > 0) {
+            db.getAllRoles(function (err, roles) {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Error getting roles');
+                }
+                res.render('edit_employee.ejs', { employee: emp[0], roles: roles });
+            });
+        }
+        else {
+            return res.status(400).send('Employee not found');
+        }
+    });
+});
+
+router.post('/edit_employee/:id',function(req,res){
+    var id = req.params.id;
+    db.editEmployee(id, req.body.first_name, req.body.last_name, req.body.email, req.body.date_of_birth, req.body.address,req.body.gender, req.body.phone, function (err, result) {
+        if (err) throw err;
+        req.flash('success','Employee updated successfully');
+        res.redirect('/employee');
+    });
+});
+
+router.get('/delete_employee/:id',function(req,res){
+    var id=req.params.id;
+    db.deleteEmployee(id,function(err,result){
+        if(err)
+        {
+            console.error(err);
+            res.status(500).send('Cannot delete employee');
+        }
+        req.flash('success','Employee Deleted Successfully');
+        res.redirect('/employee');
+    }); 
 });
 
 module.exports = router;
