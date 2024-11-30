@@ -53,6 +53,7 @@
                         <li><a href="/doctors"><i class="fa fa-user-md"></i> <span>Doctors</span></a></li>
                         <li><a href="/patients"><i class="fa fa-wheelchair"></i> <span>Patients</span></a></li>
                         <li><a href="/appointment"><i class="fa fa-calendar"></i> <span>Appointments</span></a></li>
+                        <li><a href="/schedule"><i class="fa fa-calendar"></i> <span>Schedule</span></a></li>
                         <li class="active"><a href="/employee"><i class="fa fa-list"></i> <span>Employees List</span></a></li>
                         <li><a href="/roles"><i class="fa fa-cogs"></i> <span>Roles</span></a></li>
                         <li><a href="/store"><i class="fa fa-cube"></i> <span>Medicine Store</span></a></li>
@@ -60,7 +61,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 
     <div class="page-wrapper">
@@ -71,8 +71,8 @@
                     <h4 class="page-title">Employees</h4>
                 </div>
                 <div class="col-sm-8 col-9 text-right m-b-20">
-                    <a href="employee/add_employee"
-                        class="btn btn-primary btn-rounded float-right"><i class="fa fa-plus"></i> Add Employee</a>
+                    <a href="employee/add_employee" class="btn btn-primary btn-rounded float-right"><i
+                            class="fa fa-plus"></i> Add Employee</a>
                 </div>
             </div>
 
@@ -146,9 +146,11 @@
                                                     <a class="dropdown-item"
                                                         href="/employee/edit_employee/<%= list[i].employee_id %>"><i
                                                             class="fa fa-pencil m-r-5"></i> Edit</a>
-                                                    <a class="dropdown-item"
-                                                        href="http://localhost:3000/employee/delete_employee/<%= list[i].employee_id %>"><i
-                                                            class="fa fa-trash-o m-r-5"></i> Delete</a>
+                                                            <form action="/employee/delete_employee/<%= list[i].employee_id %>" method="POST">
+                                                                <button type="submit" class="dropdown-item">
+                                                                    <i class="fa fa-trash-o m-r-5"></i> Delete
+                                                                </button>
+                                                            </form>
                                                 </div>
                                             </div>
                                         </td>

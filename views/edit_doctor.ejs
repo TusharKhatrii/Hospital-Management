@@ -59,14 +59,14 @@
                         <li><a href="/home/Patients"><i class="fa fa-wheelchair"></i> <span>Patients</span></a></li>
                         <li><a href="/appointment"><i class="fa fa-calendar"></i> <span>Appointments</span></a></li>
                         </li>
-
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-book"></i> <span> Payroll </span> <span
-                                    class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="/receipt"> Employee Salary </a></li>
-
-                            </ul>
+                        <li>
+                            <a href="/schedule"><i class="fa fa-calendar"></i> <span>Schedule</span></a>
+                        </li>
+                        <li>
+                            <a href="/employee"><i class="fa fa-list"></i> <span>Employees List</span></a>
+                        </li>
+                        <li>
+                            <a href="/roles"><i class="fa fa-cogs"></i> <span>Roles</span></a>
                         </li>
                         <li>
                             <a href="/store"><i class="fa fa-cube"></i> <span>Medicine Store</span></a>
@@ -84,7 +84,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form action="/doctors/update_doctor/<%= doctor.doctor_id %>" method="POST" 
+                        <form name="addNewRecord" action="/doctors/update_doctor/<%= doctor.doctor_id %>" method="POST"
                             enctype="multipart/form-data" onsubmit="return validateForm();">
                             <div class="row">
                                 <div class="col-sm-6">
@@ -110,9 +110,10 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="date_of_birth">Date of Birth <span class="text-danger">*</span></label>
+                                        <label for="date_of_birth">Date of Birth <span
+                                                class="text-danger">*</span></label>
                                         <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
-                                        value="<%= doctor.date_of_birth.toISOString().split('T')[0] %>" required>
+                                            value="<%= doctor.date_of_birth.toISOString().split('T')[0] %>" required>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -120,14 +121,15 @@
                                         <label class="gen-label">Gender:</label>
                                         <div class="form-check-inline">
                                             <label class="form-check-label">
-                                                <input type="radio" name="gender" class="form-check-input"
-                                                value="male" <%= doctor.gender === 'male' ? 'checked' : '' %>>Male
+                                                <input type="radio" name="gender" class="form-check-input" value="male"
+                                                    <%=doctor.gender==='male' ? 'checked' : '' %>>Male
                                             </label>
                                         </div>
                                         <div class="form-check-inline">
                                             <label class="form-check-label">
                                                 <input type="radio" name="gender" class="form-check-input"
-                                                value="female" <%= doctor.gender === 'female' ? 'checked' : '' %>>Female
+                                                    value="female" <%=doctor.gender==='female' ? 'checked' : ''
+                                                    %>>Female
                                             </label>
                                         </div>
                                     </div>
@@ -164,7 +166,7 @@
                             <select class="form-control" name="specialist_id" required>
                                 <% specialties.forEach(function(specialty) { %>
                                     <option value="<%= specialty.specialist_id %>"
-                                        <%= doctor.specialist_id === specialty.specialist_id ? 'selected' : '' %> >
+                                        <%=doctor.specialist_id===specialty.specialist_id ? 'selected' : '' %> >
                                         <%= specialty.specialist_name %>
                                     </option>
                                     <% }) %>
@@ -189,7 +191,7 @@
         </div>
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
-    <script src="/js/formValidation.js"></script>
+    <script src="/assets/js/formValidation.js"></script>
     <script src="/assets/js/jquery-3.2.1.min.js"></script>
     <script src="/assets/js/popper.min.js"></script>
     <script src="/assets/js/bootstrap.min.js"></script>

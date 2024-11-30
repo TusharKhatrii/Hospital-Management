@@ -17,11 +17,8 @@
 		<script src="/assets/js/respond.min.js"></script>
 	<![endif]-->
 </head>
-
 <body>
-
-
-    <div class="main-wrapper">
+<div class="main-wrapper">
         <div class="header">
             <div class="header-left">
                 <a href="/home" class="logo">
@@ -76,19 +73,13 @@
                             <a href="/appointment"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
                         </li>
                         <li>
+                            <a href="/schedule"><i class="fa fa-calendar"></i> <span>Schedule</span></a>
+                        </li>
+                        <li>
                             <a href="/employee"><i class="fa fa-list"></i> <span>Employees List</span></a>
                         </li>
                         <li>
                             <a href="/roles"><i class="fa fa-cogs"></i> <span>Roles</span></a>
-                        </li>
-
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-book"></i> <span> Payroll </span> <span
-                                    class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="/receipt"> Employee Salary </a></li>
-
-                            </ul>
                         </li>
                         <li>
                             <a href="/store"><i class="fa fa-cube"></i> <span>Medicine Store</span></a>
@@ -118,7 +109,7 @@
                 <% } %>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form method="POST" action="/doctors/add_doctor" enctype="multipart/form-data" onsubmit="return validateForm();">
+                        <form name="addNewRecord" method="POST" action="/doctors/add_doctor" enctype="multipart/form-data" onsubmit="return validateForm();">
                              <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -175,13 +166,13 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Contact <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text" name="contact" required>
+                                        <input class="form-control" type="number" name="contact" required>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>CNIC <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="text" name="cnic" required>
+                                        <input class="form-control" type="number" name="cnic" required>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -218,6 +209,7 @@
         </div>
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
+    <script src="/assets/js/formValidation.js"></script>
     <script src="/assets/js/jquery-3.2.1.min.js"></script>
 	<script src="/assets/js/popper.min.js"></script>
     <script src="/assets/js/bootstrap.min.js"></script>

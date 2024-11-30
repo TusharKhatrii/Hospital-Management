@@ -21,27 +21,27 @@ router.get('/', function (req, res) {
     db.getAllEmployees(function (err, result) {
         if (err) {
             console.error(err);
-            return res.status(500).send('Server Error'); 
+            return res.status(500).send('Server Error');
         }
         result.forEach(doctor => {
             const date = new Date(doctor.date_of_birth);
-            if (!isNaN(date.getTime())) { 
+            if (!isNaN(date.getTime())) {
                 doctor.date_of_birth = `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
             } else {
-                doctor.date_of_birth = ''; 
+                doctor.date_of_birth = '';
             }
         });
-        res.render('employee.ejs', { list: result }); 
+        res.render('employee.ejs', { list: result });
     });
 });
 
 router.get('/add_employee', function (req, res) {
-    db.getAllEmployees(function (err, result) {
+    db.getAllRoles(function (err, role) {
         if (err) {
             console.error(err);
             return callback(err);
         }
-        res.render('add_employee.ejs', { list: result });
+        res.render('add_employee.ejs', { list: role });
     });
 });
 
@@ -57,7 +57,7 @@ router.post('/add_employee', function (req, res) {
         contact,
         gender,
         role_id
-    } = req.body; 
+    } = req.body;
 
     if (!first_name || !last_name || !email || !password || !contact || !cnic) {
         return res.status(400).send("Please fill all required fields.");
@@ -79,7 +79,7 @@ router.post('/add_employee', function (req, res) {
 
             // Redirect to the employee list or a success page
             req.flash('success', 'Employee added successfully with ID: ', newEmployeeId);
-            res.redirect('/employee'); 
+            res.redirect('/employee');
         });
     });
 });
@@ -106,26 +106,25 @@ router.get('/edit_employee/:id', function (req, res) {
     });
 });
 
-router.post('/edit_employee/:id',function(req,res){
+router.post('/edit_employee/:id', function (req, res) {
     var id = req.params.id;
-    db.editEmployee(id, req.body.first_name, req.body.last_name, req.body.email, req.body.date_of_birth, req.body.address,req.body.gender, req.body.phone, function (err, result) {
+    db.editEmployee(id, req.body.first_name, req.body.last_name, req.body.email, req.body.date_of_birth, req.body.address, req.body.gender, req.body.phone, function (err, result) {
         if (err) throw err;
-        req.flash('success','Employee updated successfully');
+        req.flash('success', 'Employee updated successfully');
         res.redirect('/employee');
     });
 });
 
-router.get('/delete_employee/:id',function(req,res){
-    var id=req.params.id;
-    db.deleteEmployee(id,function(err,result){
-        if(err)
-        {
+router.post('/delete_employee/:id', function (req, res) {
+    var id = req.params.id;
+    db.deleteEmployee(id, function (err, result) {
+        if (err) {
             console.error(err);
             res.status(500).send('Cannot delete employee');
         }
-        req.flash('success','Employee Deleted Successfully');
+        req.flash('success', 'Employee Deleted Successfully');
         res.redirect('/employee');
-    }); 
+    });
 });
 
 module.exports = router;

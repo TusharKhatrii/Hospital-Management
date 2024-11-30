@@ -40,6 +40,9 @@ var patient_controller = require('./controllers/patient_controller');
 var roles = require('./controllers/roles.js');
 
 
+
+
+
 var receipt = require('./controllers/receipt');
 var chat = require('./controllers/chat');
 
@@ -67,9 +70,9 @@ app.use(bodyParser.json());
 app.use(cookie());
 //app.use(expressValidator());
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/assets', express.static(path.join(__dirname, 'public/assets/')));
 var server = app.listen(3000, function () {
-
+    
     console.log('server started');
 });
 

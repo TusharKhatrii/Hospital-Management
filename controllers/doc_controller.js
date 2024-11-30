@@ -53,6 +53,7 @@ router.get('/', function (req, res) {
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
+
 router.get('/add_doctor', function (req, res) {
     db.getAllSpecialties(function (err, result) {
         if (err) {

@@ -59,21 +59,15 @@
                         <li class="active"><a href="/home/Patients"><i class="fa fa-wheelchair"></i>
                                 <span>Patients</span></a></li>
                         <li><a href="/appointment"><i class="fa fa-calendar"></i> <span>Appointments</span></a></li>
+                        <li>
+                            <a href="/schedule"><i class="fa fa-calendar"></i> <span>Schedule</span></a>
+                        </li>
                         </li>
                         <li>
                             <a href="/employee"><i class="fa fa-list"></i> <span>Employees List</span></a>
                         </li>
                         <li>
                             <a href="/roles"><i class="fa fa-cogs"></i> <span>Roles</span></a>
-                        </li>
-
-                        <li class="submenu">
-                            <a href="#"><i class="fa fa-book"></i> <span> Payroll </span> <span
-                                    class="menu-arrow"></span></a>
-                            <ul style="display: none;">
-                                <li><a href="/receipt"> Employee Salary </a></li>
-
-                            </ul>
                         </li>
                         <li>
                             <a href="/store"><i class="fa fa-cube"></i> <span>Medicine Store</span></a>
@@ -91,7 +85,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-8 offset-lg-2">
-                        <form action="/patients/update_patient/<%= patient.patient_id %>" method="POST" onsubmit="return validateForm();">
+                        <form name="addNewRecord" action="/patients/update_patient/<%= patient.patient_id %>" method="POST" onsubmit="return validateForm();">
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="form-group">
@@ -149,7 +143,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label>Phone</label>
-                                        <input class="form-control" type="text" name="phone"
+                                        <input class="form-control" type="number" name="phone"
                                             value="<%= patient.contact %>">
                                     </div>
                                 </div>
@@ -175,7 +169,7 @@
         </div>
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
-    <script src="/js/formValidation.js"></script>
+    <script src="/assets/js/formValidation.js"></script>
     <script src="/assets/js/jquery-3.2.1.min.js"></script>
     <script src="/assets/js/popper.min.js"></script>
     <script src="/assets/js/bootstrap.min.js"></script>

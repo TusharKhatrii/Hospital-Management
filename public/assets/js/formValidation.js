@@ -1,7 +1,7 @@
 function validateForm() {
-    const firstName = document.forms["addEmployeeForm"]["first_name"].value;
-    const lastName = document.forms["addEmployeeForm"]["last_name"].value;
-    const dobInput = document.forms["addEmployeeForm"]["date_of_birth"];
+    const firstName = document.forms["addNewRecord"]["first_name"].value;
+    const lastName = document.forms["addNewRecord"]["last_name"].value;
+    const dobInput = document.forms["addNewRecord"]["date_of_birth"];
     const dob = new Date(dobInput.value);
 
     // Regular expression for checking names

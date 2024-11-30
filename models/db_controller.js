@@ -425,7 +425,6 @@ module.exports.getAllAppointment = function (callback) {
 
 module.exports.getAllRoles = function (callback) {
   var query = `SELECT * FROM ROLES`;
-  console.log(query);
   con.query(query, function (err, result) {
     if (err) {
       console.error('Error executing query:', err);
