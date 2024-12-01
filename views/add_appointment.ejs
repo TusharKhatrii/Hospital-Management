@@ -145,18 +145,20 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Select Schedule</label>
-                                <select class="form-control" name="schedule_id" required>
-                                    <% for (var i = 0; i < list.length; i++) { %>
-                                        <option value="<%= list[i].Schedule_id %>"><%= list[i].Schedule_id %></option>
-
-                                    <% } %>
-                                </select>
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Select Schedule</label>
+                                    <select class="form-control" name="schedule_id" required>
+                                        <% for (var i=0; i < list.length; i++) { %>
+                                            <option value="<%= list[i].Schedule_id %>">
+                                                <%= list[i].Schedule_id %>
+                                            </option>
+                                            <% } %>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary submit-btn">Create Appointment</button>
                         </div>

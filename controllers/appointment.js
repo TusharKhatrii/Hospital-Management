@@ -55,68 +55,88 @@ router.get('/add_appointment', function (req, res) {
 
 
 router.post('/add_appointment', function (req, res) {
-
-    const
-        {
-            appointment_number,
-            appointment_date,
-            appointment_status,
-            patient_id,
-            schedule_id,
-        } = req.body;
+    const {
+        appointment_number,
+        appointment_date,
+        appointment_status,
+        patient_id,
+        schedule_id,
+    } = req.body;
+    
     console.log(req.body);
-
+    
+    // Validate all fields are provided
     if (!appointment_number || !appointment_date || !appointment_status || !patient_id || !schedule_id) {
         return res.status(400).send('All fields are required.');
     }
-    db.getAppointmentId(function (err, result) {
+    
+    if (appointment_number < 100) {
+        return res.status(400).send('Appointment number should be grater than 100');
+    }
+    // Check if the appointment number already exists
+    db.checkAppointmentNumber(appointment_number, function (err, exists) {
         if (err) {
-            console.error('Error fetching max appointment:', err);
-            return res.status(500).send('Error fetching last appointment ID.');
+            console.error('Error checking appointment number:', err);
+            return res.status(500).send('Error checking appointment number.');
         }
 
-        const newAppointmentID = result[0].maxId ? result[0].maxId + 1 : 1;
-        db.addAppointment(newAppointmentID, appointment_number, appointment_date, appointment_status, patient_id, schedule_id, function (err, result) {
+        if (exists) {
+            return res.status(400).send('Appointment number already exists.');
+        }
+
+        // Generate new appointment ID
+        db.getAppointmentId(function (err, result) {
             if (err) {
-                console.error("Error adding appointment:", err);
-                return res.status(400).send('Error adding appointment.');
+                console.error('Error fetching max appointment:', err);
+                return res.status(500).send('Error fetching last appointment ID.');
             }
-            req.flash('success','New Appointment Added');
-            res.redirect('/appointment');
+
+            const newAppointmentID = result[0].maxId ? result[0].maxId + 1 : 1;
+
+            // Add new appointment to database
+            db.addAppointment(newAppointmentID, appointment_number, appointment_date, appointment_status, patient_id, schedule_id, function (err, result) {
+                if (err) {
+                    console.error('Error adding appointment:', err);
+                    return res.status(400).send('Error adding appointment.');
+                }
+
+                req.flash('success', 'New Appointment Added');
+                res.redirect('/appointment');
+            });
         });
     });
-}); 
+});
 
 
 router.get('/edit_appointment/:id', function (req, res) {
     var id = req.params.id;
-    
+
     db.getappointmentbyid2(id, function (err, appointment) {
         if (err) {
             console.error("Error fetching appointment details: ", err);
             return res.status(500).send("Server Error");
         }
-        console.log(appointment);
-    db.getAllPatients_with_fullname(function (err, patients) {
-        if (err) {
-            console.error("Error fetching patient details: ", err);
-            return res.status(500).send("Server Error");
-        }
-
-        // Fetch doctors after patients
-        db.getAllSchedule(function (err, schedule) {
+        // console.log(appointment);
+        db.getAllPatients_with_fullname(function (err, patients) {
             if (err) {
-                console.error("Error fetching schedule details: ", err);
+                console.error("Error fetching patient details: ", err);
                 return res.status(500).send("Server Error");
             }
 
-            // Pass both patients and doctors to the view
-            res.render('edit_appointment.ejs', {
-                patients: patients,
-                list: schedule,
-                appointment: appointment
+            // Fetch doctors after patients
+            db.getAllSchedule(function (err, schedule) {
+                if (err) {
+                    console.error("Error fetching schedule details: ", err);
+                    return res.status(500).send("Server Error");
+                }
+
+                // Pass both patients and doctors to the view
+                res.render('edit_appointment.ejs', {
+                    patients: patients,
+                    list: schedule,
+                    appointment: appointment[0]
+                });
             });
-        });
         });
     });
     //  res.render('edit_appointment.ejs');
@@ -124,7 +144,20 @@ router.get('/edit_appointment/:id', function (req, res) {
 
 router.post('/edit_appointment/:id', function (req, res) {
     var id = req.params.id;
-    db.editappointment(id, req.body.p_name, req.body.department, req.body.d_name, req.body.date, req.body.time, req.body.email, req.body.phone, function (err, result) {
+    const
+        {
+            appointment_num,
+            appointment_date,
+            appointment_status,
+            patient_id,
+            schedule_id,
+        } = req.body;
+    db.updateAppointment(id, appointment_num, appointment_date, appointment_status, patient_id, schedule_id, function (err, result) {
+        if (err) {
+            console.error("Error updating appointment:", err);
+            return res.status(400).send('Error updating appointment.');
+        }
+        req.flash('success', ' Appointment Updated');
         res.redirect('/appointment');
     });
 });

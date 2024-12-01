@@ -386,10 +386,56 @@ module.exports.getappointmentbyid2 = function (id, callback) {
     callback(null, result);
   });
 }
+
 module.exports.deleteappointment = function (id, callback) {
   var query = "delete from appointment where appointment_id=" + id;
   con.query(query, callback);
 };
+
+module.exports.checkAppointmentNumber = function (appointment_number, callback) {
+  const query = 'SELECT COUNT(*) AS count FROM appointment WHERE appointment_num = ?';
+  con.query(query, [appointment_number], function (err, results) {
+    if (err) {
+      return callback(err);
+    }
+
+    const exists = results[0].count > 0;
+    callback(null, exists);
+  });
+};
+
+
+module.exports.updateAppointment = function (
+  appointment_id,
+  appointment_num,
+  appointment_date,
+  status,
+  patient_id,
+  schedule_id,
+  callback
+) {
+  var query = `UPDATE appointment SET 
+    appointment_num = ?, 
+    appointment_date = ?, 
+    status = ?,  
+    patient_id = ?, 
+    schedule_id = ?
+    WHERE appointment_id = ?`;
+
+  con.query(
+    query,
+    [appointment_num, appointment_date, status, patient_id, schedule_id, appointment_id],
+    function (err, results) {
+      if (err) {
+        console.error("Error updating appointment:", err);
+        return callback(err);
+      }
+      console.log("Update successful:", results);
+      callback(null, results);
+    }
+  );
+};
+
 module.exports.addAppointment = function (
   appointment_id,
   appointment_number,
@@ -434,14 +480,14 @@ module.exports.getAllRoles = function (callback) {
   });
 };
 
-module.exports.getRoleId = function (callback){
-  var query=`SELECT MAX(role_id) AS maxId FROM ROLES`;
-  con.query(query,function(err,res){
-    if(err){
+module.exports.getRoleId = function (callback) {
+  var query = `SELECT MAX(role_id) AS maxId FROM ROLES`;
+  con.query(query, function (err, res) {
+    if (err) {
       console.error(err);
       return callback(err);
     }
-    callback(null,res);
+    callback(null, res);
   });
 };
 
@@ -486,10 +532,9 @@ module.exports.addRole = function (role_id, role_name, callback) {
   });
 };
 
-module.exports.getAllEmployees = function (callback)
-{
+module.exports.getAllEmployees = function (callback) {
   var query = `SELECT E.*,R.ROLE_NAME AS 'role_name' FROM EMPLOYEE E LEFT JOIN ROLES R ON R.ROLE_ID = E.ROLE_ID `;
-  con.query(query,function(err,res){
+  con.query(query, function (err, res) {
     if (err) {
       console.error("Error Fetching Employees:", err)
       return callback(err);
@@ -498,16 +543,14 @@ module.exports.getAllEmployees = function (callback)
   });
 };
 
-module.exports.getEmployeeId = function (callback)
-{
+module.exports.getEmployeeId = function (callback) {
   var query = `SELECT MAX(employee_id) AS maxId FROM EMPLOYEE`;
-  con.query(query,function(err,res){
-    if(err)
-    {
+  con.query(query, function (err, res) {
+    if (err) {
       console.error(err);
       return callback(err);
     }
-    callback(null,res);
+    callback(null, res);
   });
 };
 
@@ -522,7 +565,7 @@ module.exports.addEmployee = function (
   cnic,
   contact,
   gender,
-  role_id,  
+  role_id,
   callback
 ) {
   // SQL query for inserting new employee data
@@ -543,16 +586,14 @@ module.exports.addEmployee = function (
   );
 };
 
-module.exports.getEmployeeById = function (id,callback)
-{
+module.exports.getEmployeeById = function (id, callback) {
   var query = `SELECT E.*,R.ROLE_NAME AS 'role_name'  FROM EMPLOYEE E LEFT JOIN ROLES R ON R.ROLE_ID = E.ROLE_ID WHERE E.EMPLOYEE_ID = ?`;
-  con.query(query,id,function(err,res){
-    if(err)
-    {
+  con.query(query, id, function (err, res) {
+    if (err) {
       console.error(err);
       return callback(err);
     }
-    callback(null,res);
+    callback(null, res);
   });
 };
 
@@ -579,7 +620,7 @@ module.exports.editEmployee = function (
 
   con.query(
     query,
-    [first_name, last_name, email, date_of_birth, address, gender,phone, employee_id],
+    [first_name, last_name, email, date_of_birth, address, gender, phone, employee_id],
     function (err, results) {
       if (err) {
         console.error("Error updating employee:", err);
