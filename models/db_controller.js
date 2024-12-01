@@ -346,20 +346,51 @@ module.exports.addschedule = function (
   );
 };
 
+module.exports.updateSchedule = function (
+  schedule_id,
+  title,
+  start_time,
+  end_time,
+  NOP,
+  doctor_id,
+  callback
+) {
+  var query = `UPDATE schedule SET
+              title=?,
+              start_time=?,
+              end_time=?,
+              NOP=?,
+              doctor_id=?
+              WHERE schedule_id = ?`;
+  con.query(
+    query,
+    [schedule_id, title, start_time, end_time, NOP, doctor_id],
+    function (err, results) {
+      if (err) {
+        console.error("Error during database updation:", err);
+        return callback(err);
+      }
+      callback(null, results);
+    }
+  );
+};
+
 module.exports.getschedule = function (id, callback) {
   var query = "select * from schedule where schedule_id =" + id;
   console.log(query);
   con.query(query, callback);
 };
+
 module.exports.deleteschedule = function (id, callback) {
   var query = "delete from schedule where schedule_id =" + id;
   con.query(query, callback);
 };
+
 module.exports.getschedulebyid1 = function (id, callback) {
   var query = "select * from schedule where schedule_id =" + id;
-  console.log(query);
   con.query(query, callback);
 };
+
 module.exports.getAppointmentId = function (callback) {
   var query = `SELECT MAX(appointment_id) AS maxId FROM appointment`;
   con.query(query, function (err, res) {
