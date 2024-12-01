@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+  <link rel="shortcut icon" type="image/x-icon" href="/assets/img/favicon.ico">
+  <title>Preclinic - Add Item</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/assets/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
+  <!--[if lt IE 9]>
+        <script src="/assets/js/html5shiv.min.js"></script>
+        <script src="/assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+  <div class="main-wrapper">
+    <div class="header">
+      <div class="header-left">
+        <a href="/home" class="logo">
+          <img src="/assets/img/logo.png" width="35" height="35" alt=""> <span>Preclinic</span>
+        </a>
+      </div>
+      <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+      <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+      <ul class="nav user-menu float-right">
+        <li class="nav-item dropdown has-arrow">
+          <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+            <span class="user-img">
+              <img class="rounded-circle" src="/assets/img/user.jpg" width="24" alt="Admin">
+              <span class="status online"></span>
+            </span>
+            <span>Admin</span>
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/home/profile">My Profile</a>
+            <a class="dropdown-item" href="/home/edit-profile">Edit Profile</a>
+            <a class="dropdown-item" href="/logout">Logout</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-inner slimscroll">
+        <div id="sidebar-menu" class="sidebar-menu">
+          <ul>
+            <li class="menu-title">Main</li>
+            <li><a href="/home"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+            <li><a href="/doctors"><i class="fa fa-user-md"></i> <span>Doctors</span></a></li>
+            <li><a href="/patients"><i class="fa fa-wheelchair"></i> <span>Patients</span></a></li>
+            <li><a href="/appointment"><i class="fa fa-calendar"></i> <span>Appointments</span></a></li>
+            <li><a href="/schedule"><i class="fa fa-calendar"></i> <span>Schedule</span></a></li>
+            <li><a href="/employee"><i class="fa fa-list"></i> <span>Employees List</span></a></li>
+            <li><a href="/roles"><i class="fa fa-cogs"></i> <span>Roles</span></a></li>
+            <li class="active"><a href="/store"><i class="fa fa-cube"></i> <span>Medicine Store</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-wrapper">
+      <div class="content">
+        <div class="row">
+          <div class="col-sm-4 col-3">
+            <h4 class="page-title"><%= isEditing ? 'Edit Item' : 'Add Item to Pharmacy' %></h4>
+          </div>
+        </div>
+
+        <!-- Display Success and Error Messages -->
+        <% if (successMessages && successMessages.length > 0) { %>
+        <div class="alert alert-success">
+          <%= successMessages.join(', ') %>
+        </div>
+        <% } %>
+        <% if (errorMessages && errorMessages.length > 0) { %>
+        <div class="alert alert-danger">
+          <%= errorMessages.join(', ') %>
+        </div>
+        <% } %>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-container">
+              <div class="container">
+                <form action="<%= isEditing ? '/store/edit_item/:id' : '/store/add_item' %>" method="POST" class="mx-auto" style="max-width: 800px;">
+                  <!-- Hidden field for item ID if editing -->
+                  <% if (isEditing) { %>
+                  <input type="hidden" name="id" value="<%= item.id %>">
+                  <% } %>
+
+                  <div class="row mb-4">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="<%= isEditing ? item.name : '' %>" required>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="purchase_date">Purchase Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="purchase_date" name="purchase_date" value="<%= isEditing ? item.purchase_date.toISOString().split('T')[0] : '' %>" required>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="expire_date">Expire Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="expire_date" name="expire_date" value="<%= isEditing ? item.expire_date.toISOString().split('T')[0] : '' %>" required>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="price">Price <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="price" name="price" value="<%= isEditing ? item.price : '' %>" required>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="quantity">Quantity <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" value="<%= isEditing ? item.quantity : '' %>" required>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="supplier_id">Supplier <span class="text-danger">*</span></label>
+                        <select name="supplier_id" id="supplier_id" class="form-control" required>
+                          <option value="">Select Supplier</option>
+                          <% suppliers.forEach(function(supplier) { %>
+                          <option value="<%= supplier.supplier_id %>" <%= isEditing && item.supplier_id == supplier.supplier_id ? 'selected' : '' %>>
+                            <%= supplier.first_name %> <%= supplier.last_name %>
+                          </option>
+                          <% }); %>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-primary submit-btn"><%= isEditing ? 'Update Item' : 'Add Item' %></button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- <div class="container">
+                    <form action="/store/add_item" method="POST" class="mx-auto" style="max-width: 800px;">
+                        <h4 class="text-center mb-4"><%= item===true %>? Add Item to Pharmacy:Add item</h4>
+                
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                            </div>
+                
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="purchase_date">Purchase Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="purchase_date" name="purchase_date" required>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="expire_date">Expire Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="expire_date" name="expire_date" required>
+                                </div>
+                            </div>
+                
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="price">Price <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="price" name="price" required>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="quantity">Quantity <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="quantity" name="quantity" required>
+                                </div>
+                            </div>
+                
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="supplier_id">Supplier <span class="text-danger">*</span></label>
+                                    <select name="supplier_id" id="supplier_id" class="form-control" required>
+                                        <option value="">Select Supplier</option>
+                                        <% suppliers.forEach(function(supplier) { %>
+                                            <option value="<%= supplier.supplier_id %>">
+                                                <%= supplier.first_name %>  <%= supplier.last_name %> 
+                                            </option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary submit-btn">Add Item</button>
+                        </div>
+                    </form> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-overlay" data-reff=""></div>
+  <script src="/assets/js/jquery-3.2.1.min.js"></script>
+  <script src="/assets/js/popper.min.js"></script>
+  <script src="/assets/js/bootstrap.min.js"></script>
+  <script src="/assets/js/jquery.slimscroll.js"></script>
+  <script src="/assets/js/select2.min.js"></script>
+  <script src="/assets/js/moment.min.js"></script>
+  <script src="/assets/js/app.js"></script>
+  </div>
+</body>
+
+</html>

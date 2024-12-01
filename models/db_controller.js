@@ -673,6 +673,97 @@ module.exports.deleteEmployee = function (emp_id, callback) {
   });
 };
 
+module.exports.getAllSuppliers = function (callback) {
+  const query = `SELECT * FROM SUPPLIERS`;
+  con.query(query, function (err, res) {
+    if (err) {
+      callback(err);
+    }
+    callback(null, res);
+  })
+};
+
+module.exports.getAllPharmacy = function (callback) {
+  const query = `SELECT 
+            p.pharacy_id,
+            p.name,
+            p.purchase_date,
+            p.expire_date,
+            p.price,
+            p.quantity,
+            CONCAT(s.first_name, ' ', s.last_name) AS supplier_name
+        FROM pharmacy p 
+        LEFT JOIN Suppliers s ON s.supplier_id = p.supplier_id;`;
+
+  con.query(query, callback);
+};
+
+module.exports.getAllPharmacyByID = function (id, callback) {
+  const query = `SELECT 
+            p.name,
+            p.purchase_date,
+            p.expire_date,
+            p.price,
+            p.quantity,
+            CONCAT(s.first_name, ' ', s.last_name) AS 'supplier_name'
+            FROM pharmacy p 
+            LEFT JOIN Suppliers s ON s.supplier_id = p.supplier_id
+            WHERE p.pharacy_id = ?;`;
+  con.query(query, id, callback);
+};
+
+module.exports.addPharmacy = function (name, purchase_date, expire_date, price, quantity, supplier_id, callback) {
+  const query = `INSERT INTO Pharmacy (name, purchase_date, expire_date, price, quantity, supplier_id) 
+                 VALUES (?, ?, ?, ?, ?, ?)`;
+  con.query(query, [name, purchase_date, expire_date, price, quantity, supplier_id], function (err, res) {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, res);
+  })
+};
+
+module.exports.updatePharmacy = function (id, name, purchase_date, expire_date, price, quantity, supplier_id, callback) {
+  const query = `UPDATE  Pharmacy SET name=?,
+  purchase_date=?,
+  expire_date=?,
+  price=?,
+  quantity=?,
+  supplier_id=?
+  WHERE pharacy_id = ?`;
+  con.query(query, [name, purchase_date, expire_date, price, quantity, supplier_id,id], function (err, res) {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, res);
+  })
+};
+
+module.exports.deletePharmacy = function (id, callback) {
+  var query = `DELETE FROM pharmacy WHERE pharacy_id = ?`;
+  con.query(query, id, function (err, res) {
+    if (err) {
+      console.error("Error deleting Pharmacy item:", err)
+      return callback(err);
+    }
+    callback(null, res);
+  });
+};
+
+module.exports.searchMed = function (key, callback) {
+  // Use a JOIN to include supplier information
+  const query = `
+      SELECT pharmacy.*, CONCAT(s.first_name, ' ', s.last_name) AS 'supplier_name' 
+      FROM pharmacy 
+      LEFT JOIN suppliers s ON pharmacy.supplier_id = s.supplier_id 
+      WHERE pharmacy.NAME LIKE ?;
+  `;
+
+  const searchTerm = '%' + key + '%';
+  
+  con.query(query, [searchTerm], callback);
+};
+
 
 module.exports.searchDoc = function (key, callback) {
   var query = 'SELECT  *from doctor where first_name like "%' + key + '%"';
