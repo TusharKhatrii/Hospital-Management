@@ -491,7 +491,24 @@ module.exports.addAppointment = function (
 };
 
 module.exports.getAllAppointment = function (callback) {
-  var query = `select a.appointment_id, a.appointment_num, p.patient_id,  CONCAT(p.first_name, ' ', p.last_name) AS pname,d.doctor_id ,CONCAT(d.first_name, ' ', d.last_name) AS dname, a.appointment_date, s.start_time, s.end_time from appointment a join patient p on p.patient_id = a.patient_id join schedule s on s.schedule_id = a.schedule_id join doctor d on d.doctor_id = s.schedule_id`;
+  var query = `SELECT 
+        a.appointment_id, 
+        a.appointment_num, 
+        p.patient_id, 
+        CONCAT(p.first_name, ' ', p.last_name) AS pname,
+        d.doctor_id,
+        CONCAT(d.first_name, ' ', d.last_name) AS dname, 
+        a.appointment_date, 
+        s.start_time, 
+        s.end_time 
+    FROM 
+        appointment a
+    JOIN 
+        patient p ON p.patient_id = a.patient_id
+    JOIN 
+        schedule s ON s.schedule_id = a.schedule_id
+    JOIN 
+        doctor d ON d.doctor_id = s.doctor_id`;
   con.query(query, function (err, res) {
     if (err) {
       return callback(err);
@@ -731,7 +748,7 @@ module.exports.updatePharmacy = function (id, name, purchase_date, expire_date, 
   quantity=?,
   supplier_id=?
   WHERE pharacy_id = ?`;
-  con.query(query, [name, purchase_date, expire_date, price, quantity, supplier_id,id], function (err, res) {
+  con.query(query, [name, purchase_date, expire_date, price, quantity, supplier_id, id], function (err, res) {
     if (err) {
       return callback(err);
     }
@@ -760,9 +777,126 @@ module.exports.searchMed = function (key, callback) {
   `;
 
   const searchTerm = '%' + key + '%';
-  
+
   con.query(query, [searchTerm], callback);
 };
+
+module.exports.getTotalPatientsByDoctorId = function (id, callback) {
+  const query = `SELECT COUNT(DISTINCT p.patient_id) AS totalPatients
+                   FROM appointment a
+                   JOIN Patient p ON a.patient_id = p.patient_id
+                   JOIN SCHEDULE s ON a.Schedule_id = s.Schedule_id
+                   WHERE s.doctor_id = ?`;
+  con.query(query, id, function (err, res) {
+    if (err) {
+      console.error("Error fetching Total Patients:", err)
+      return callback(err);
+    }
+    callback(null, res);
+  });
+};
+
+module.exports.getTotalAppointments = function (doctorId, callback) {
+  const query = `SELECT COUNT(*) AS totalAppointments
+                 FROM appointment a
+                 JOIN SCHEDULE s ON a.Schedule_id = s.Schedule_id
+                 WHERE s.doctor_id = ?`;
+  con.query(query, [doctorId], function (error, results) {
+    if (error) return callback(error, null);
+    callback(null, results[0].totalAppointments);
+  });
+};
+
+
+module.exports.getUpcomingAppointments = function (doctorId, callback) {
+  const query = `SELECT a.appointment_id, p.first_name AS patientName, a.appointment_date, s.start_time AS time
+                 FROM appointment a
+                 JOIN Patient p ON a.patient_id = p.patient_id
+                 JOIN SCHEDULE s ON a.Schedule_id = s.Schedule_id
+                 WHERE s.doctor_id = ?
+                 AND a.appointment_date >= CURDATE()
+                 ORDER BY a.appointment_date ASC LIMIT 5`; // Fetching only the next 5 appointments
+  con.query(query, [doctorId], function (error, results) {
+    if (error) return callback(error, null);
+    callback(null, results);
+  });
+}
+
+module.exports.getPatientsForDoctor = function (doctorId, callback) {
+  const query = `SELECT DISTINCT p.patient_id, p.first_name, p.last_name, p.contact
+                 FROM appointment a
+                 JOIN Patient p ON a.patient_id = p.patient_id
+                 JOIN SCHEDULE s ON a.Schedule_id = s.Schedule_id
+                 WHERE s.doctor_id = ?`;
+  con.query(query, [doctorId], function (error, results) {
+    if (error) return callback(error, null);
+    callback(null, results);
+  });
+}
+
+module.exports.getTotalPatients = function (doctorId, callback) {
+  const query = `
+      SELECT COUNT(DISTINCT p.patient_id) AS totalPatients
+      FROM appointment a
+      JOIN Patient p ON a.patient_id = p.patient_id
+      JOIN SCHEDULE s ON a.Schedule_id = s.Schedule_id
+      WHERE s.doctor_id = ?;
+  `;
+  con.query(query, [doctorId], (error, results) => {
+    if (error) return callback(error);
+    callback(null, results[0].totalPatients);
+  });
+}
+
+module.exports.getTotalAppointments = function (doctorId, callback) {
+  const query = `
+      SELECT COUNT(*) AS totalAppointments
+      FROM appointment a
+      JOIN SCHEDULE s ON a.Schedule_id = s.Schedule_id
+      WHERE s.doctor_id = ?;
+  `;
+  con.query(query, [doctorId], (error, results) => {
+    if (error) return callback(error);
+    callback(null, results[0].totalAppointments);
+  });
+}
+
+module.exports.getDoctorDetails = function (doctorId, callback) {
+  const query = `
+      SELECT d.first_name, d.last_name, s.specialist_name
+      FROM Doctor d
+      JOIN Specialties s ON d.specialist_id = s.specialist_id
+      WHERE d.doctor_id = ?;
+  `;
+  con.query(query, [doctorId], (error, results) => {
+    if (error) return callback(error);
+    if (results.length > 0) {
+      const doctorDetails = {
+        doctorName: `${results[0].first_name} ${results[0].last_name}`,
+        doctorSpecialty: results[0].specialist_name,
+      };
+      callback(null, doctorDetails);
+    } else {
+      callback(null, null);
+    }
+  });
+}
+
+module.exports.getAppointmentsForDoctor = function (doctorId, callback) {
+  const query = `
+      SELECT a.appointment_id, a.appointment_num, a.appointment_date, a.status, 
+             CONCAT(p.first_name, ' ', p.last_name) AS patient_name
+      FROM appointment a
+      JOIN Patient p ON a.patient_id = p.patient_id
+      JOIN SCHEDULE s ON a.Schedule_id = s.Schedule_id
+      WHERE s.doctor_id = ?;
+  `;
+  con.query(query, [doctorId], (error, results) => {
+    if (error) return callback(error);
+    callback(null, results);
+  });
+}
+
 
 
 module.exports.searchDoc = function (key, callback) {

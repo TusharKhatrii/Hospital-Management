@@ -57,9 +57,14 @@ router.post('/', [
             }
             
             if (results.length > 0) {
+                const doctorId = results[0].doctor_id;
                 response.cookie('email', email, { httpOnly: true, secure: false }); // Set email cookie
                 sweetalert.fire('logged In!');
-                response.redirect('/home/');  // Redirect to home page after successful login
+                if (user_type === 'doctor') {
+                    response.redirect(`/doctor/home/${doctorId}`); // Redirect to doctor dashboard
+                } else {
+                    response.redirect('/home'); // Redirect to home for other user types
+                }
             } else {
                 response.render('login.ejs', { error: 'Invalid credentials. Please try again.' }); // Render with an error message
                 // response.redirect('/login');  // If credentials don't match, stay on login page

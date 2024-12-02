@@ -38,9 +38,7 @@ var appointment = require('./controllers/appointment');
 var schedule = require('./controllers/schedule');
 var patient_controller = require('./controllers/patient_controller');
 var roles = require('./controllers/roles.js');
-
-
-
+var doctor_dashboard = require('./controllers/doctor_dashboard');
 
 
 var receipt = require('./controllers/receipt');
@@ -95,3 +93,4 @@ app.use('/appointment', appointment);
 app.use('/schedule', schedule);
 app.use('/receipt', receipt);
 app.use('/roles', roles);
+app.use('/doctor/home', doctor_dashboard);
