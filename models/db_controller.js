@@ -863,7 +863,7 @@ module.exports.getTotalAppointments = function (doctorId, callback) {
 
 module.exports.getDoctorDetails = function (doctorId, callback) {
   const query = `
-      SELECT d.first_name, d.last_name, s.specialist_name
+      SELECT d.doctor_id,d.first_name, d.last_name, s.specialist_name
       FROM Doctor d
       JOIN Specialties s ON d.specialist_id = s.specialist_id
       WHERE d.doctor_id = ?;
@@ -880,7 +880,7 @@ module.exports.getDoctorDetails = function (doctorId, callback) {
       callback(null, null);
     }
   });
-}
+};
 
 module.exports.getAppointmentsForDoctor = function (doctorId, callback) {
   const query = `
@@ -895,8 +895,43 @@ module.exports.getAppointmentsForDoctor = function (doctorId, callback) {
     if (error) return callback(error);
     callback(null, results);
   });
-}
+};
 
+
+module.exports.getAppointmentsByDoctorId = function (doctorId, callback) {
+  const query = `
+    SELECT 
+      a.appointment_id, 
+      a.appointment_num, 
+      p.patient_id, 
+      CONCAT(p.first_name, ' ', p.last_name) AS pname,
+      d.doctor_id,
+      CONCAT(d.first_name, ' ', d.last_name) AS dname, 
+      a.appointment_date, 
+      s.start_time, 
+      s.end_time, 
+      a.status 
+    FROM 
+      appointment a
+    JOIN 
+      patient p ON p.patient_id = a.patient_id
+    JOIN 
+      schedule s ON s.schedule_id = a.schedule_id
+    JOIN 
+      doctor d ON d.doctor_id = s.doctor_id
+    WHERE 
+      d.doctor_id = ?
+    ORDER BY 
+      a.appointment_date ASC;
+  `;
+
+  con.query(query, [doctorId], function (err, results) {
+    if (err) {
+      return callback(err, null);
+    }
+    callback(null, results);
+  });
+}
 
 
 module.exports.searchDoc = function (key, callback) {

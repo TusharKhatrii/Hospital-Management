@@ -5,7 +5,7 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 var db = require.main.require('./models/db_controller'); // Adjust if necessary
 const { check, validationResult } = require('express-validator');
-var  sweetalert = require('sweetalert2');
+var sweetalert = require('sweetalert2');
 
 // Database connection
 var con = mysql.createConnection({
@@ -49,13 +49,13 @@ router.post('/', [
 
     if (email && password && user_type) {
         const query = `SELECT * FROM ${table} WHERE email = ? AND password = ?`;
-        
+
         con.query(query, [email, password], function (error, results) {
             if (error) {
                 console.error("Database error: ", error);
                 return response.send('Database error');
             }
-            
+
             if (results.length > 0) {
                 const doctorId = results[0].doctor_id;
                 response.cookie('email', email, { httpOnly: true, secure: false }); // Set email cookie
@@ -69,7 +69,7 @@ router.post('/', [
                 response.render('login.ejs', { error: 'Invalid credentials. Please try again.' }); // Render with an error message
                 // response.redirect('/login');  // If credentials don't match, stay on login page
             }
-            
+
         });
 
     } else {

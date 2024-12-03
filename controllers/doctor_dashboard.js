@@ -17,7 +17,7 @@ router.get('*', function (req, res, next) {
     next();
     // }
 });
-router.get('/:id', function (req, res) {
+router.get('/home/:id', function (req, res) {
     const doctorId = req.params.id;
 
     // Fetch doctor's details (name and specialty)
@@ -68,6 +68,7 @@ router.get('/:id', function (req, res) {
                             patientList: patientList,
                             doctorName: doctorDetails.doctorName,
                             doctorSpecialty: doctorDetails.doctorSpecialty,
+                            doctorId,doctorId
                         });
                     });
                 });
@@ -76,22 +77,22 @@ router.get('/:id', function (req, res) {
     });
 });
 
-
-// router.get('/:id', function (req, res) {
-//     const id = req.params.id;
-
-//     db.getDoctorById(id, function (error, results) {
-//         if (error) {
-//             console.error("Database error: ", error);
-//             return res.send('Database error');
-//         }
-
-//         if (results.length > 0) {
-//             res.render('doctor_dashboard.ejs', { doctor: results[0] });
-//         } else {
-//             res.send('Doctor not found');
-//         }
-//     });
-// });
-
+router.get('/appointments/:doctorId', function (req, res) {
+    const doctorId = req.params.doctorId;  // Get the doctor ID from the URL parameter
+  
+    // Fetch appointments for the specific doctor from the database
+    db.getAppointmentsByDoctorId(doctorId, function (err, appointments) {
+      if (err) {
+        console.error("Error fetching appointments:", err);
+        return res.status(500).send('Error fetching appointments');
+      }
+  
+      // Render the appointments page with the fetched data
+      res.render('doctor_appointment.ejs', {
+        appointments: appointments,
+        doctorId:doctorId
+      });
+    });
+  });
+  
 module.exports = router;

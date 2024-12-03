@@ -49,16 +49,16 @@
           <ul>
             <li class="menu-title">Main</li>
             <li class="active">
-              <a href="/doctor/home/<%= doctor.doctor_id %>"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+              <a href="/doctor/home/<%= doctorId %>"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
             </li>
             <li>
-              <a href="/doctor/appointments"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
+              <a href="/doctor/appointments/<%= doctorId %>"><i class="fa fa-calendar"></i> <span>Appointments</span></a>
             </li>
             <li>
-              <a href="/doctor/patients"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
+              <a href="/doctor/patients/<%= doctorId %>"><i class="fa fa-wheelchair"></i> <span>Patients</span></a>
             </li>
             <li>
-              <a href="/doctor/schedule"><i class="fa fa-clock-o"></i> <span>Schedule</span></a>
+              <a href="/doctor/schedule/<%= doctorId %>"><i class="fa fa-clock-o"></i> <span>Schedule</span></a>
             </li>
           </ul>
         </div>

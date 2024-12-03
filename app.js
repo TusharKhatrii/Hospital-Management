@@ -93,4 +93,4 @@ app.use('/appointment', appointment);
 app.use('/schedule', schedule);
 app.use('/receipt', receipt);
 app.use('/roles', roles);
-app.use('/doctor/home', doctor_dashboard);
+app.use('/doctor', doctor_dashboard);
