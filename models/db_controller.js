@@ -49,6 +49,26 @@ module.exports.signup = function (
   );
 };
 
+module.exports.getAdminByEmail = function (email, callback) {
+  var query = "SELECT * FROM admin where email = ?";
+  con.query(query, [email], function (err, res) {
+    if (err) {
+      return callback(err, null);
+    }
+    callback(null, res[0]);
+  });
+};
+
+
+module.exports.updateAdminPassword = function (email, newPassword, callback) {
+  var query = "UPDATE admin SET password = ? WHERE email = ?";
+  con.query(query, [newPassword, email], function (err, res) {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, res);
+  })};
+
 module.exports.getDocId = function (callback) {
   var query = "SELECT MAX(doctor_id) AS maxId FROM Doctor";
   con.query(query, function (err, res) {

@@ -12,10 +12,7 @@ var expressValidator = require('express-validator');
 var sweetalert = require('sweetalert2');
 const flash = require('connect-flash');
 
-
 var app = express();
-
-
 
 var bodyParser = require('body-parser');
 
@@ -24,25 +21,17 @@ var home = require('./controllers/home');
 var signup = require('./controllers/signup');
 var doc_controller = require('./controllers/doc_controller');
 var db = require('./models/db_controller');
-var reset = require('./controllers/reset_controller');
-var set = require('./controllers/set_controller');
 var employee = require('./controllers/employee.js');
 var roles = require('./controllers/roles.js');
 var logout = require('./controllers/logout');
 var verify = require('./controllers/verify');
 var store = require('./controllers/store');
-var landing = require('./controllers/landing');
-var complain = require('./controllers/complain');
-var inbox = require('./controllers/inbox');
 var appointment = require('./controllers/appointment');
 var schedule = require('./controllers/schedule');
 var patient_controller = require('./controllers/patient_controller');
 var roles = require('./controllers/roles.js');
 var doctor_dashboard = require('./controllers/doctor_dashboard');
 
-
-var receipt = require('./controllers/receipt');
-var chat = require('./controllers/chat');
 
 var app = express();
 
@@ -73,24 +62,18 @@ var server = app.listen(3000, function () {
     
     console.log('server started');
 });
-
+app.use('/', login);
 app.use('/login', login);
 app.use('/home', home);
 app.use('/signup', signup);
 app.use('/doctors', doc_controller);
 app.use('/patients', patient_controller);
-app.use('/resetpassword', reset);
-app.use('/setpassword', set);
 app.use('/employee', employee);
 app.use('/roles', roles)
 app.use('/logout', logout);
 app.use('/verify', verify);
 app.use('/store', store);
-app.use('/', landing);
-app.use('/complain', complain);
-app.use('/inbox', inbox);
 app.use('/appointment', appointment);
 app.use('/schedule', schedule);
-app.use('/receipt', receipt);
 app.use('/roles', roles);
 app.use('/doctor', doctor_dashboard);
